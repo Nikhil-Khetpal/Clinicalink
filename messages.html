@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 80px);
+            margin-top: 80px;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Sidebar - Conversations List */
+        .conversations-sidebar {
+            width: 350px;
+            background: rgba(10, 10, 10, 0.8);
+            border-right: 2px solid rgba(0, 255, 136, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            background: rgba(26, 26, 46, 0.95);
+        }
+
+        .sidebar-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin-bottom: 1rem;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .search-box {
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: rgba(10, 10, 10, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            background: rgba(10, 10, 10, 0.9);
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Conversations List */
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(26, 26, 46, 0.6);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .conversation-item:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .conversation-item.active {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .online {
+            background: var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+
+        .offline {
+            background: var(--accent-orange);
+        }
+
+        .busy {
+            background: var(--warning-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-last-message {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .unread-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--accent-orange);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.95);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .chat-header-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-header-status {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .header-action-btn:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+        }
+
+        /* Messages Container */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            max-width: 70%;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            align-self: flex-end;
+        }
+
+        .message.received {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .message.sent .message-content {
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: var(--neon-green);
+        }
+
+        .message-text {
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .message-status {
+            color: var(--neon-green);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Message Input */
+        .message-input-container {
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.95);
+            border-top: 2px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .message-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(10, 10, 10, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: none;
+        }
+
+        .message-input:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            background: rgba(10, 10, 10, 0.9);
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        .input-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .input-action-btn:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--neon-green);
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-text {
+            margin-bottom: 2rem;
+        }
+
+        .start-chat-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Doctor Selection Modal */
+        .doctor-selection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .doctor-selection-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid var(--neon-green);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .doctor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .doctor-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-option:hover {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .doctor-option-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .doctor-option-info {
+            flex: 1;
+        }
+
+        .doctor-option-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .doctor-option-specialty {
+            color: var(--neon-blue);
+            font-size: 0.9rem;
+        }
+
+        .doctor-option-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-text {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .conversations-sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 10;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .conversations-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .chat-area {
+                width: 100%;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                Clinicalink
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="doctors.html">Doctors</a>
+                <a class="nav-link" href="patients.html">Patients</a>
+                <a class="nav-link" href="register.html">Register</a>
+                <a class="nav-link" href="login.html">Login</a>
+                <a class="nav-link" href="admin.html">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <!-- Conversations Sidebar -->
+        <div class="conversations-sidebar" id="conversationsSidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Messages</h2>
+                <button class="new-chat-btn" onclick="openDoctorSelection()">
+                    <i class="fas fa-plus me-2"></i>New Chat
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search conversations..." id="searchConversations">
+                </div>
+            </div>
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3 class="empty-state-title">Start a Conversation</h3>
+                <p class="empty-state-text">Select a doctor to begin chatting or start a new conversation</p>
+                <button class="start-chat-btn" onclick="openDoctorSelection()">
+                    <i class="fas fa-plus me-2"></i>Start New Chat
+                </button>
+            </div>
+
+            <!-- Chat Content (Hidden by default) -->
+            <div id="chatContent" style="display: none; height: 100%;">
+                <!-- Chat Header -->
+                <div class="chat-header" id="chatHeader">
+                    <!-- Header will be populated dynamically -->
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <!-- Message Input -->
+                <div class="message-input-container">
+                    <div class="message-input-wrapper">
+                        <button class="input-action-btn" title="Attach file">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <textarea class="message-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                        <button class="input-action-btn" title="Send emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Selection Modal -->
+    <div class="doctor-selection-modal" id="doctorSelectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Select a Doctor to Chat</h3>
+                <button class="close-modal" onclick="closeDoctorSelection()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="doctor-list" id="doctorList">
+                <!-- Doctors will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentConversation = null;
+        let conversations = [];
+        let doctors = [];
+        let typingTimeout = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        // Initialize application
+        function initializeApp() {
+            // Load current user (simulate logged in user)
+            currentUser = {
+                id: 1,
+                name: "Alice Johnson",
+                type: "patient",
+                avatar: "AJ"
+            };
+
+            // Load doctors
+            loadDoctors();
+            
+            // Load conversations
+            loadConversations();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check for pre-selected doctor from localStorage
+            checkPreselectedDoctor();
+        }
+
+        // Load available doctors
+        function loadDoctors() {
+            doctors = [
+                {
+                    id: 1,
+                    name: "Dr. John Smith",
+                    specialization: "Cardiology",
+                    status: "online",
+                    avatar: "JS",
+                    availableForChat: true
+                },
+                {
+                    id: 2,
+                    name: "Dr. Sarah Johnson",
+                    specialization: "Pediatrics",
+                    status: "online",
+                    avatar: "SJ",
+                    availableForChat: true
+                },
+                {
+                    id: 3,
+                    name: "Dr. Michael Brown",
+                    specialization: "Neurology",
+                    status: "busy",
+                    avatar: "MB",
+                    availableForChat: false
+                },
+                {
+                    id: 4,
+                    name: "Dr. Emily Davis",
+                    specialization: "Dermatology",
+                    status: "online",
+                    avatar: "ED",
+                    availableForChat: true
+                },
+                {
+                    id: 5,
+                    name: "Dr. Robert Wilson",
+                    specialization: "Orthopedics",
+                    status: "offline",
+                    avatar: "RW",
+                    availableForChat: false
+                },
+                {
+                    id: 6,
+                    name: "Dr. Lisa Anderson",
+                    specialization: "Psychiatry",
+                    status: "online",
+                    avatar: "LA",
+                    availableForChat: true
+                }
+            ];
+        }
+
+        // Load conversations
+        function loadConversations() {
+            // Simulate existing conversations
+            conversations = [
+                {
+                    id: 1,
+                    participant: doctors[0],
+                    lastMessage: "Hello! How can I help you today?",
+                    lastMessageTime: "10:30 AM",
+                    unreadCount: 2,
+                    messages: [
+                        {
+                            id: 1,
+                            sender: doctors[0],
+                            text: "Hello! How can I help you today?",
+                            time: "10:30 AM",
+                            type: "received"
+                        },
+                        {
+                            id: 2,
+                            sender: currentUser,
+                            text: "Hi Dr. Smith, I have been experiencing some chest pain lately.",
+                            time: "10:32 AM",
+                            type: "sent"
+                        },
+                        {
+                            id: 3,
+                            sender: doctors[0],
+                            text: "I understand your concern. Can you describe the pain? Is it sharp or dull?",
+                            time: "10:33 AM",
+                            type: "received"
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    participant: doctors[1],
+                    lastMessage: "Thank you for the update!",
+                    lastMessageTime: "Yesterday",
+                    unreadCount: 0,
+                    messages: [
+                        {
+                            id: 1,
+                            sender: currentUser,
+                            text: "Dr. Johnson, my child's fever has gone down.",
+                            time: "Yesterday",
+                            type: "sent"
+                        },
+                        {
+                            id: 2,
+                            sender: doctors[1],
+                            text: "That's great news! Continue the medication as prescribed.",
+                            time: "Yesterday",
+                            type: "received"
+                        },
+                        {
+                            id: 3,
+                            sender: doctors[1],
+                            text: "Thank you for the update!",
+                            time: "Yesterday",
+                            type: "received"
+                        }
+                    ]
+                }
+            ];
+
+            renderConversations();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Message input
+            const messageInput = document.getElementById('messageInput');
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Auto-resize textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+
+            // Search conversations
+            document.getElementById('searchConversations').addEventListener('input', function(e) {
+                filterConversations(e.target.value);
+            });
+        }
+
+        // Render conversations list
+        function renderConversations() {
+            const conversationsList = document.getElementById('conversationsList');
+            conversationsList.innerHTML = '';
+
+            conversations.forEach(conversation => {
+                const conversationElement = createConversationElement(conversation);
+                conversationsList.appendChild(conversationElement);
+            });
+        }
+
+        // Create conversation element
+        function createConversationElement(conversation) {
+            const div = document.createElement('div');
+            div.className = 'conversation-item';
+            div.onclick = () => selectConversation(conversation);
+
+            const statusClass = conversation.participant.status === 'online' ? 'online' : 
+                              conversation.participant.status === 'busy' ? 'busy' : 'offline';
+
+            div.innerHTML = `
+                <div class="conversation-avatar">
+                    ${conversation.participant.avatar}
+                    <div class="online-indicator ${statusClass}"></div>
+                </div>
+                <div class="conversation-info">
+                    <div class="conversation-name">${conversation.participant.name}</div>
+                    <div class="conversation-last-message">${conversation.lastMessage}</div>
+                </div>
+                <div>
+                    <div class="conversation-time">${conversation.lastMessageTime}</div>
+                    ${conversation.unreadCount > 0 ? `<div class="unread-badge">${conversation.unreadCount}</div>` : ''}
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Select conversation
+        function selectConversation(conversation) {
+            currentConversation = conversation;
+            
+            // Update active state
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Show chat content
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'flex';
+
+            // Update chat header
+            updateChatHeader(conversation.participant);
+
+            // Load messages
+            loadMessages(conversation);
+
+            // Clear unread count
+            conversation.unreadCount = 0;
+            renderConversations();
+        }
+
+        // Update chat header
+        function updateChatHeader(participant) {
+            const chatHeader = document.getElementById('chatHeader');
+            const statusText = participant.status === 'online' ? 'Available now' : 
+                             participant.status === 'busy' ? 'Busy' : 'Offline';
+
+            chatHeader.innerHTML = `
+                <div class="chat-header-info">
+                    <div class="chat-header-avatar">${participant.avatar}</div>
+                    <div>
+                        <div class="chat-header-name">${participant.name}</div>
+                        <div class="chat-header-status">${participant.specialization} • ${statusText}</div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="header-action-btn" title="Voice call">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="header-action-btn" title="Video call">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="header-action-btn" title="More options">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Load messages
+        function loadMessages(conversation) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '';
+
+            conversation.messages.forEach(message => {
+                const messageElement = createMessageElement(message);
+                messagesContainer.appendChild(messageElement);
+            });
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Create message element
+        function createMessageElement(message) {
+            const div = document.createElement('div');
+            div.className = `message ${message.type}`;
+
+            if (message.type === 'received') {
+                div.innerHTML = `
+                    <div class="message-avatar">${message.sender.avatar}</div>
+                    <div class="message-content">
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-time">${message.time}</div>
+                    </div>
+                `;
+            } else {
+                div.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-time">
+                            ${message.time}
+                            <span class="message-status">
+                                <i class="fas fa-check-double"></i>
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return div;
+        }
+
+        // Send message
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (!messageText || !currentConversation) return;
+
+            // Create new message
+            const newMessage = {
+                id: Date.now(),
+                sender: currentUser,
+                text: messageText,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                type: 'sent'
+            };
+
+            // Add to conversation
+            currentConversation.messages.push(newMessage);
+            currentConversation.lastMessage = messageText;
+            currentConversation.lastMessageTime = 'Just now';
+
+            // Update UI
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageElement = createMessageElement(newMessage);
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Update conversations list
+            renderConversations();
+
+            // Simulate doctor response
+            simulateDoctorResponse();
+        }
+
+        // Simulate doctor response
+        function simulateDoctorResponse() {
+            // Show typing indicator
+            showTypingIndicator();
+
+            setTimeout(() => {
+                hideTypingIndicator();
+
+                const responses = [
+                    "I understand your concern. Let me help you with that.",
+                    "Thank you for sharing this information with me.",
+                    "Based on what you've described, I would recommend...",
+                    "Have you been experiencing any other symptoms?",
+                    "That's a good question. Let me explain...",
+                    "I'm here to help you through this."
+                ];
+
+                const responseText = responses[Math.floor(Math.random() * responses.length)];
+
+                const responseMessage = {
+                    id: Date.now(),
+                    sender: currentConversation.participant,
+                    text: responseText,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    type: 'received'
+                };
+
+                currentConversation.messages.push(responseMessage);
+                currentConversation.lastMessage = responseText;
+                currentConversation.lastMessageTime = 'Just now';
+
+                // Update UI
+                const messagesContainer = document.getElementById('messagesContainer');
+                const messageElement = createMessageElement(responseMessage);
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Update conversations list
+                renderConversations();
+            }, 2000);
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message received typing-indicator';
+            typingIndicator.id = 'typingIndicator';
+            typingIndicator.innerHTML = `
+                <div class="message-avatar">${currentConversation.participant.avatar}</div>
+                <div class="message-content">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingIndicator);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Open doctor selection modal
+        function openDoctorSelection() {
+            const modal = document.getElementById('doctorSelectionModal');
+            const doctorList = document.getElementById('doctorList');
+            
+            // Populate doctor list
+            doctorList.innerHTML = '';
+            
+            doctors.forEach(doctor => {
+                const doctorOption = createDoctorOption(doctor);
+                doctorList.appendChild(doctorOption);
+            });
+            
+            modal.classList.add('show');
+        }
+
+        // Create doctor option
+        function createDoctorOption(doctor) {
+            const div = document.createElement('div');
+            div.className = 'doctor-option';
+            div.onclick = () => selectDoctorForChat(doctor);
+
+            const statusClass = doctor.status === 'online' ? 'online' : 
+                              doctor.status === 'busy' ? 'busy' : 'offline';
+            const statusText = doctor.status === 'online' ? 'Available' : 
+                             doctor.status === 'busy' ? 'Busy' : 'Offline';
+
+            div.innerHTML = `
+                <div class="doctor-option-avatar">${doctor.avatar}</div>
+                <div class="doctor-option-info">
+                    <div class="doctor-option-name">${doctor.name}</div>
+                    <div class="doctor-option-specialty">${doctor.specialization}</div>
+                    <div class="doctor-option-status">
+                        <div class="status-dot ${statusClass}"></div>
+                        <span class="status-text">${statusText}</span>
+                        ${!doctor.availableForChat ? '<span class="status-text">• Not available for chat</span>' : ''}
+                    </div>
+                </div>
+            `;
+
+            if (!doctor.availableForChat) {
+                div.style.opacity = '0.6';
+                div.style.cursor = 'not-allowed';
+            }
+
+            return div;
+        }
+
+        // Select doctor for chat
+        function selectDoctorForChat(doctor) {
+            if (!doctor.availableForChat) {
+                alert(`${doctor.name} is not available for chat right now. Please try again later.`);
+                return;
+            }
+
+            // Check if conversation already exists
+            let existingConversation = conversations.find(c => c.participant.id === doctor.id);
+            
+            if (existingConversation) {
+                selectConversation(existingConversation);
+            } else {
+                // Create new conversation
+                const newConversation = {
+                    id: Date.now(),
+                    participant: doctor,
+                    lastMessage: "Start a conversation",
+                    lastMessageTime: "Now",
+                    unreadCount: 0,
+                    messages: []
+                };
+
+                conversations.unshift(newConversation);
+                renderConversations();
+                selectConversation(newConversation);
+            }
+
+            closeDoctorSelection();
+        }
+
+        // Close doctor selection modal
+        function closeDoctorSelection() {
+            const modal = document.getElementById('doctorSelectionModal');
+            modal.classList.remove('show');
+        }
+
+        // Filter conversations
+        function filterConversations(searchTerm) {
+            const filteredConversations = conversations.filter(conv => 
+                conv.participant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                conv.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            const conversationsList = document.getElementById('conversationsList');
+            conversationsList.innerHTML = '';
+
+            filteredConversations.forEach(conversation => {
+                const conversationElement = createConversationElement(conversation);
+                conversationsList.appendChild(conversationElement);
+            });
+        }
+
+        // Check for pre-selected doctor
+        function checkPreselectedDoctor() {
+            const messageDoctor = localStorage.getItem('messageDoctor');
+            if (messageDoctor) {
+                const doctor = JSON.parse(messageDoctor);
+                localStorage.removeItem('messageDoctor');
+                
+                // Find or create conversation with this doctor
+                let existingConversation = conversations.find(c => c.participant.id === doctor.id);
+                
+                if (existingConversation) {
+                    selectConversation(existingConversation);
+                } else {
+                    const newConversation = {
+                        id: Date.now(),
+                        participant: doctor,
+                        lastMessage: "Start a conversation",
+                        lastMessageTime: "Now",
+                        unreadCount: 0,
+                        messages: []
+                    };
+
+                    conversations.unshift(newConversation);
+                    renderConversations();
+                    selectConversation(newConversation);
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('doctorSelectionModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDoctorSelection();
+            }
+        });
+    </script>
+</body>
+</html>

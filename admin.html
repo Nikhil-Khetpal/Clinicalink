@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Admin Layout */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(26, 26, 46, 0.95);
+            border-right: 2px solid rgba(0, 255, 136, 0.3);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            text-align: center;
+        }
+
+        .sidebar-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+            border-left-color: var(--neon-green);
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            margin-right: 1rem;
+        }
+
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: rgba(10, 10, 10, 0.5);
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .admin-topbar {
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Data Sections */
+        .data-section {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        #liveMap {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Tables */
+        .table-dark {
+            background: rgba(10, 10, 10, 0.5);
+            color: var(--text-primary);
+        }
+
+        .table-dark th {
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom: 2px solid var(--neon-green);
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-green);
+        }
+
+        .table-dark td {
+            border-color: rgba(0, 255, 136, 0.2);
+            vertical-align: middle;
+        }
+
+        .table-dark tbody tr:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .status-inactive {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .status-online {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .status-offline {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            margin: 0 0.25rem;
+        }
+
+        .action-btn:hover {
+            color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .action-btn.delete:hover {
+            color: var(--accent-orange);
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Buttons */
+        .btn-gaming {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-gaming:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+            color: white;
+        }
+
+        /* Location Badge */
+        .location-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+        }
+
+        .location-badge i {
+            margin-right: 0.25rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Mobile Responsive */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Clinicalink Admin</h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="sidebar-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+                <a href="#appointments" class="sidebar-item" onclick="showSection('appointments')">
+                    <i class="fas fa-calendar"></i>Appointments
+                </a>
+                <a href="#locations" class="sidebar-item" onclick="showSection('locations')">
+                    <i class="fas fa-map-marked-alt"></i>Live Locations
+                </a>
+                <a href="#doctors" class="sidebar-item" onclick="showSection('doctors')">
+                    <i class="fas fa-user-md"></i>Doctors
+                </a>
+                <a href="#patients" class="sidebar-item" onclick="showSection('patients')">
+                    <i class="fas fa-user"></i>Patients
+                </a>
+                <a href="#analytics" class="sidebar-item" onclick="showSection('analytics')">
+                    <i class="fas fa-chart-bar"></i>Analytics
+                </a>
+                <a href="index.html" class="sidebar-item">
+                    <i class="fas fa-home"></i>Back to Home
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Top Bar -->
+            <div class="admin-topbar">
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <div class="d-flex align-items-center">
+                    <span class="me-3">Welcome, Admin</span>
+                    <button class="btn btn-gaming btn-sm" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="stat-number" id="totalDoctors">0</div>
+                        <div class="stat-label">Active Doctors</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-injured"></i>
+                        </div>
+                        <div class="stat-number" id="totalPatients">0</div>
+                        <div class="stat-label">Active Patients</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-number" id="totalAppointments">0</div>
+                        <div class="stat-label">Booked Appointments</div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments -->
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Recent Appointments</h3>
+                        <button class="btn btn-gaming btn-sm" onclick="refreshData()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAppointments">
+                                <!-- Appointments will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section" style="display: none;">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">All Appointments</h3>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-gaming btn-sm" onclick="exportAppointments()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-gaming btn-sm" onclick="clearAppointments()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Search appointments..." id="appointmentSearch" onkeyup="filterAppointments()">
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Date & Time</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Fee</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTable">
+                                <!-- Appointments will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Locations Section -->
+            <section id="locations-section" class="content-section" style="display: none;">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Live Locations</h3>
+                        <button class="btn btn-gaming btn-sm" onclick="refreshLocations()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <!-- Map Container -->
+                    <div class="map-container">
+                        <div id="liveMap"></div>
+                    </div>
+                    
+                    <!-- Location List -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-success mb-3">Active Doctors</h5>
+                            <div id="doctorLocations">
+                                <!-- Doctor locations will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-info mb-3">Active Patients</h5>
+                            <div id="patientLocations">
+                                <!-- Patient locations will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors-section" class="content-section" style="display: none;">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Doctors Management</h3>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-gaming btn-sm" onclick="exportDoctors()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-gaming btn-sm" onclick="clearDoctors()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Specialization</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorsTable">
+                                <!-- Doctors will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Patients Section -->
+            <section id="patients-section" class="content-section" style="display: none;">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Patients Management</h3>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-gaming btn-sm" onclick="exportPatients()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-gaming btn-sm" onclick="clearPatients()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Health Score</th>
+                                    <th>Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientsTable">
+                                <!-- Patients will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics-section" class="content-section" style="display: none;">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Analytics & Reports</h3>
+                    </div>
+                    <p class="text-center text-muted">Detailed analytics and reports coming soon...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Leaflet JS for Maps -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Global Variables
+        let map = null;
+        let doctorMarkers = [];
+        let patientMarkers = [];
+        let appointments = [];
+        let doctors = [];
+        let patients = [];
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            loadDashboardData();
+            initializeMap();
+            startLocationTracking();
+        });
+
+        // Initialize mock data
+        function initializeData() {
+            appointments = [
+                { id: 1, patient: 'Alice Johnson', doctor: 'Dr. John Smith', datetime: '2024-03-26 10:00', type: 'Online', status: 'scheduled', fee: 150, patientLocation: { lat: 40.7128, lng: -74.0060 }, doctorLocation: { lat: 40.7589, lng: -73.9851 } },
+                { id: 2, patient: 'Bob Smith', doctor: 'Dr. Sarah Johnson', datetime: '2024-03-26 14:00', type: 'Offline', status: 'completed', fee: 200, patientLocation: { lat: 40.7489, lng: -73.9680 }, doctorLocation: { lat: 40.7614, lng: -73.9776 } },
+                { id: 3, patient: 'Carol Williams', doctor: 'Dr. Michael Brown', datetime: '2024-03-27 09:00', type: 'Online', status: 'scheduled', fee: 180, patientLocation: { lat: 40.7282, lng: -73.9942 }, doctorLocation: { lat: 40.7489, lng: -73.9680 } },
+                { id: 4, patient: 'David Brown', doctor: 'Dr. Emily Davis', datetime: '2024-03-25 16:00', type: 'Online', status: 'cancelled', fee: 120, patientLocation: { lat: 40.7580, lng: -73.9855 }, doctorLocation: { lat: 40.7614, lng: -73.9776 } },
+                { id: 5, patient: 'Eva Martinez', doctor: 'Dr. Robert Wilson', datetime: '2024-03-27 11:00', type: 'Offline', status: 'scheduled', fee: 175, patientLocation: { lat: 40.7128, lng: -74.0060 }, doctorLocation: { lat: 40.7589, lng: -73.9851 } }
+            ];
+
+            doctors = [
+                { id: 1, name: 'Dr. John Smith', email: 'john@clinicalink.com', specialization: 'Cardiology', status: 'online', location: { lat: 40.7589, lng: -73.9851 } },
+                { id: 2, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Pediatrics', status: 'online', location: { lat: 40.7614, lng: -73.9776 } },
+                { id: 3, name: 'Dr. Michael Brown', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'offline', location: { lat: 40.7489, lng: -73.9680 } },
+                { id: 4, name: 'Dr. Emily Davis', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'online', location: { lat: 40.7282, lng: -73.9942 } },
+                { id: 5, name: 'Dr. Robert Wilson', email: 'robert@clinicalink.com', specialization: 'Orthopedics', status: 'offline', location: { lat: 40.7580, lng: -73.9855 } }
+            ];
+
+            patients = [
+                { id: 1, name: 'Alice Johnson', email: 'alice@email.com', phone: '123-456-7890', healthScore: 95, location: { lat: 40.7128, lng: -74.0060 } },
+                { id: 2, name: 'Bob Smith', email: 'bob@email.com', phone: '234-567-8901', healthScore: 88, location: { lat: 40.7489, lng: -73.9680 } },
+                { id: 3, name: 'Carol Williams', email: 'carol@email.com', phone: '345-678-9012', healthScore: 92, location: { lat: 40.7282, lng: -73.9942 } },
+                { id: 4, name: 'David Brown', email: 'david@email.com', phone: '456-789-0123', healthScore: 85, location: { lat: 40.7580, lng: -73.9855 } },
+                { id: 5, name: 'Eva Martinez', email: 'eva@email.com', phone: '567-890-1234', healthScore: 90, location: { lat: 40.7128, lng: -74.0060 } }
+            ];
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            // Update stats
+            document.getElementById('totalUsers').textContent = doctors.length + patients.length;
+            document.getElementById('totalDoctors').textContent = doctors.filter(d => d.status === 'online').length;
+            document.getElementById('totalPatients').textContent = patients.length;
+            document.getElementById('totalAppointments').textContent = appointments.length;
+
+            // Load recent appointments
+            loadRecentAppointments();
+        }
+
+        // Load recent appointments
+        function loadRecentAppointments() {
+            const tbody = document.getElementById('recentAppointments');
+            tbody.innerHTML = '';
+            
+            appointments.slice(0, 5).forEach(appointment => {
+                const row = createAppointmentRow(appointment);
+                tbody.appendChild(row);
+            });
+        }
+
+        // Create appointment row
+        function createAppointmentRow(appointment) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${appointment.id}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-2">${appointment.patient.charAt(0)}</div>
+                        <div>${appointment.patient}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-2">${appointment.doctor.charAt(0)}</div>
+                        <div>${appointment.doctor}</div>
+                    </div>
+                </td>
+                <td>${appointment.datetime}</td>
+                <td><span class="status-badge status-${appointment.status}">${appointment.status}</span></td>
+                <td>
+                    <span class="location-badge">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Live
+                    </span>
+                </td>
+                <td>
+                    <button class="action-btn" onclick="viewAppointmentDetails(${appointment.id})" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn" onclick="editAppointment(${appointment.id})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="cancelAppointment(${appointment.id})" title="Cancel">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `;
+            return row;
+        }
+
+        // Initialize map
+        function initializeMap() {
+            // Initialize map centered on New York
+            map = L.map('liveMap').setView([40.7128, -74.0060], 12);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add markers for doctors and patients
+            updateMapMarkers();
+        }
+
+        // Update map markers
+        function updateMapMarkers() {
+            // Clear existing markers
+            doctorMarkers.forEach(marker => map.removeLayer(marker));
+            patientMarkers.forEach(marker => map.removeLayer(marker));
+            doctorMarkers = [];
+            patientMarkers = [];
+
+            // Add doctor markers
+            doctors.forEach(doctor => {
+                const marker = L.marker([doctor.location.lat, doctor.location.lng], {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background: ${doctor.status === 'online' ? '#00ff88' : '#ff6b6b'}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-md" style="color: white; font-size: 10px;"></i>
+                               </div>`,
+                        iconSize: [20, 20]
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <strong>${doctor.name}</strong><br>
+                    ${doctor.specialization}<br>
+                    Status: <span class="status-badge status-${doctor.status}">${doctor.status}</span>
+                `);
+
+                doctorMarkers.push(marker);
+            });
+
+            // Add patient markers
+            patients.forEach(patient => {
+                const marker = L.marker([patient.location.lat, patient.location.lng], {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background: #00d4ff; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user" style="color: white; font-size: 10px;"></i>
+                               </div>`,
+                        iconSize: [20, 20]
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <strong>${patient.name}</strong><br>
+                    Health Score: ${patient.healthScore}%<br>
+                    Phone: ${patient.phone}
+                `);
+
+                patientMarkers.push(marker);
+            });
+        }
+
+        // Start location tracking
+        function startLocationTracking() {
+            // Update locations every 30 seconds
+            setInterval(() => {
+                updateMockLocations();
+                updateMapMarkers();
+                updateLocationLists();
+            }, 30000);
+        }
+
+        // Update mock locations (simulate movement)
+        function updateMockLocations() {
+            doctors.forEach(doctor => {
+                // Slightly change location to simulate movement
+                doctor.location.lat += (Math.random() - 0.5) * 0.001;
+                doctor.location.lng += (Math.random() - 0.5) * 0.001;
+            });
+
+            patients.forEach(patient => {
+                // Slightly change location to simulate movement
+                patient.location.lat += (Math.random() - 0.5) * 0.001;
+                patient.location.lng += (Math.random() - 0.5) * 0.001;
+            });
+        }
+
+        // Update location lists
+        function updateLocationLists() {
+            // Update doctor locations
+            const doctorLocationsDiv = document.getElementById('doctorLocations');
+            if (doctorLocationsDiv) {
+                doctorLocationsDiv.innerHTML = doctors.map(doctor => `
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="user-avatar me-2">${doctor.name.charAt(0)}</div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">${doctor.name}</div>
+                            <small class="text-muted">${doctor.specialization}</small>
+                        </div>
+                        <span class="status-badge status-${doctor.status}">${doctor.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Update patient locations
+            const patientLocationsDiv = document.getElementById('patientLocations');
+            if (patientLocationsDiv) {
+                patientLocationsDiv.innerHTML = patients.map(patient => `
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="user-avatar me-2">${patient.name.charAt(0)}</div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">${patient.name}</div>
+                            <small class="text-muted">Health: ${patient.healthScore}%</small>
+                        </div>
+                        <span class="location-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeItem = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            // Load section-specific data
+            if (sectionName === 'appointments') {
+                loadAppointmentsTable();
+            } else if (sectionName === 'locations') {
+                setTimeout(() => {
+                    map.invalidateSize();
+                    updateMapMarkers();
+                    updateLocationLists();
+                }, 100);
+            } else if (sectionName === 'doctors') {
+                loadDoctorsTable();
+            } else if (sectionName === 'patients') {
+                loadPatientsTable();
+            }
+        }
+
+        // Load appointments table
+        function loadAppointmentsTable() {
+            const tbody = document.getElementById('appointmentsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            appointments.forEach(appointment => {
+                const row = createAppointmentRow(appointment);
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load doctors table
+        function loadDoctorsTable() {
+            const tbody = document.getElementById('doctorsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            doctors.forEach(doctor => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${doctor.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${doctor.name.charAt(0)}</div>
+                            <div>${doctor.name}</div>
+                        </div>
+                    </td>
+                    <td>${doctor.email}</td>
+                    <td>${doctor.specialization}</td>
+                    <td><span class="status-badge status-${doctor.status}">${doctor.status}</span></td>
+                    <td>
+                        <span class="location-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Live
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" onclick="viewDoctorDetails(${doctor.id})" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="removeDoctor(${doctor.id})" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load patients table
+        function loadPatientsTable() {
+            const tbody = document.getElementById('patientsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            patients.forEach(patient => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${patient.name.charAt(0)}</div>
+                            <div>${patient.name}</div>
+                        </div>
+                    </td>
+                    <td>${patient.email}</td>
+                    <td>${patient.phone}</td>
+                    <td>
+                        <div class="progress" style="width: 50px; height: 8px;">
+                            <div class="progress-bar bg-success" style="width: ${patient.healthScore}%"></div>
+                        </div>
+                        <small>${patient.healthScore}%</small>
+                    </td>
+                    <td>
+                        <span class="location-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Live
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" onclick="viewPatientDetails(${patient.id})" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="removePatient(${patient.id})" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Action functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function refreshData() {
+            loadDashboardData();
+            showMessage('Data refreshed successfully', 'success');
+        }
+
+        function refreshLocations() {
+            updateMapMarkers();
+            updateLocationLists();
+            showMessage('Locations refreshed', 'success');
+        }
+
+        function filterAppointments() {
+            const searchValue = document.getElementById('appointmentSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#appointmentsTable tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        }
+
+        function viewAppointmentDetails(id) {
+            const appointment = appointments.find(a => a.id === id);
+            if (appointment) {
+                showMessage(`Viewing appointment ${id}: ${appointment.patient} with ${appointment.doctor}`, 'info');
+            }
+        }
+
+        function editAppointment(id) {
+            showMessage(`Edit appointment ${id} functionality would be implemented here`, 'info');
+        }
+
+        function cancelAppointment(id) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                const appointment = appointments.find(a => a.id === id);
+                if (appointment) {
+                    appointment.status = 'cancelled';
+                    loadAppointmentsTable();
+                    loadRecentAppointments();
+                    showMessage('Appointment cancelled successfully', 'success');
+                }
+            }
+        }
+
+        function viewDoctorDetails(id) {
+            const doctor = doctors.find(d => d.id === id);
+            if (doctor) {
+                showMessage(`Viewing doctor ${id}: ${doctor.name} - ${doctor.specialization}`, 'info');
+            }
+        }
+
+        function removeDoctor(id) {
+            if (confirm('Are you sure you want to remove this doctor?')) {
+                doctors = doctors.filter(d => d.id !== id);
+                loadDoctorsTable();
+                loadDashboardData();
+                updateMapMarkers();
+                showMessage('Doctor removed successfully', 'success');
+            }
+        }
+
+        function viewPatientDetails(id) {
+            const patient = patients.find(p => p.id === id);
+            if (patient) {
+                showMessage(`Viewing patient ${id}: ${patient.name} - Health Score: ${patient.healthScore}%`, 'info');
+            }
+        }
+
+        function removePatient(id) {
+            if (confirm('Are you sure you want to remove this patient?')) {
+                patients = patients.filter(p => p.id !== id);
+                loadPatientsTable();
+                loadDashboardData();
+                updateMapMarkers();
+                showMessage('Patient removed successfully', 'success');
+            }
+        }
+
+        function exportAppointments() {
+            showMessage('Exporting appointments to CSV...', 'success');
+            // CSV export functionality would be implemented here
+        }
+
+        function exportDoctors() {
+            showMessage('Exporting doctors to CSV...', 'success');
+            // CSV export functionality would be implemented here
+        }
+
+        function exportPatients() {
+            showMessage('Exporting patients to CSV...', 'success');
+            // CSV export functionality would be implemented here
+        }
+
+        function clearAppointments() {
+            if (confirm('Are you sure you want to clear all appointments? This action cannot be undone.')) {
+                appointments = [];
+                loadAppointmentsTable();
+                loadRecentAppointments();
+                loadDashboardData();
+                showMessage('All appointments cleared', 'success');
+            }
+        }
+
+        function clearDoctors() {
+            if (confirm('Are you sure you want to clear all doctors? This action cannot be undone.')) {
+                doctors = [];
+                loadDoctorsTable();
+                loadDashboardData();
+                updateMapMarkers();
+                showMessage('All doctors cleared', 'success');
+            }
+        }
+
+        function clearPatients() {
+            if (confirm('Are you sure you want to clear all patients? This action cannot be undone.')) {
+                patients = [];
+                loadPatientsTable();
+                loadDashboardData();
+                updateMapMarkers();
+                showMessage('All patients cleared', 'success');
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showMessage(message, type) {
+            // Create a simple message display
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            messageDiv.style.zIndex = '9999';
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

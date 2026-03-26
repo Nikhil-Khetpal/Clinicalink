@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinicalink - Gaming Healthcare Platform</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-green) !important;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--neon-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 0 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .typing-text {
+            border-right: 3px solid var(--neon-green);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: var(--neon-green); }
+            51%, 100% { border-color: transparent; }
+        }
+
+        /* Buttons */
+        .btn-gaming {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn-gaming::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-gaming:hover::before {
+            left: 100%;
+        }
+
+        .btn-gaming:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-outline-gaming {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .btn-outline-gaming:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-green);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Registration Section */
+        .registration-section {
+            padding: 4rem 0;
+            background: rgba(10, 10, 10, 0.5);
+        }
+
+        .registration-card {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-control-gaming {
+            background: rgba(10, 10, 10, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-control-gaming:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            background: rgba(10, 10, 10, 0.9);
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        .form-control-gaming::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        /* User Type Selection */
+        .user-type-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-type-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-type-card:hover {
+            border-color: var(--neon-green);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .user-type-card.selected {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .user-type-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--neon-green);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(26, 26, 46, 0.95);
+            border-top: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-orange));
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(155, 89, 182, 0.7);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .feature-card {
+                margin-bottom: 2rem;
+            }
+
+            .user-type-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .registration-card {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                Clinicalink
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doctors.html">Doctors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="patients.html">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.html">Book Appointment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="typing-text">CLINICALINK</span>
+                </h1>
+                <p class="hero-subtitle">Gaming-Inspired Healthcare Platform</p>
+                <p class="lead mb-4">Transform your healthcare journey with gamification, real-time tracking, and cutting-edge technology</p>
+                
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn btn-gaming">
+                        <i class="fas fa-rocket me-2"></i>Get Started
+                    </a>
+                    <a href="#features" class="btn btn-gaming btn-outline-gaming">
+                        <i class="fas fa-gamepad me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" id="features">
+        <div class="container">
+            <h2 class="text-center mb-5 display-4">Platform Features</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h4>Gamified Experience</h4>
+                        <p>Earn XP points, unlock achievements, and level up your health journey with interactive challenges and rewards.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>XP System</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Achievements</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Leaderboards</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h4>Expert Doctors</h4>
+                        <p>Connect with certified healthcare professionals for consultations, prescriptions, and medical advice.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Verified Doctors</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Online Consultations</li>
+                            <li><i class="fas fa-check text-success me-2"></i>24/7 Availability</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h4>Emergency Services</h4>
+                        <p>Find nearby hospitals, clinics, and emergency services with real-time location tracking.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Live GPS Tracking</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Nearby Hospitals</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Emergency Alerts</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4>Real-time Chat</h4>
+                        <p>Secure messaging with doctors for quick consultations and follow-ups.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Instant Messaging</li>
+                            <li><i class="fas fa-check text-success me-2"></i>File Sharing</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Video Calls</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h4>Digital Records</h4>
+                        <p>Secure storage of medical records, prescriptions, and health history.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Secure Storage</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Easy Access</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Prescription Management</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4>Health Challenges</h4>
+                        <p>Participate in health challenges, compete with friends, and achieve wellness goals.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Daily Challenges</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Group Activities</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Rewards System</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section class="registration-section" id="registration">
+        <div class="container">
+            <div class="registration-card">
+                <h2 class="text-center mb-4">Join Clinicalink Today</h2>
+                <p class="text-center text-muted mb-4">Choose your path and start your healthcare journey</p>
+                
+                <!-- User Type Selection -->
+                <div class="user-type-selection">
+                    <div class="user-type-card selected" onclick="selectUserType('patient', this)">
+                        <div class="user-type-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h5>Patient</h5>
+                        <p>Get personalized healthcare, track your progress, and earn rewards</p>
+                    </div>
+                    <div class="user-type-card" onclick="selectUserType('doctor', this)">
+                        <div class="user-type-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h5>Doctor</h5>
+                        <p>Join our network of healthcare professionals and help patients</p>
+                    </div>
+                </div>
+                
+                <!-- Registration Form -->
+                <form id="registrationForm">
+                    <input type="hidden" id="userType" name="userType" value="patient">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control form-control-gaming" name="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-control form-control-gaming" name="email" required placeholder="Enter your email">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control form-control-gaming" name="phone" required placeholder="Enter your phone number">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password *</label>
+                            <input type="password" class="form-control form-control-gaming" name="password" required minlength="8" placeholder="Create a strong password">
+                            <small class="text-muted">Minimum 8 characters</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Patient Specific Fields -->
+                    <div id="patientFields">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Age</label>
+                                <input type="number" class="form-control form-control-gaming" name="age" min="1" max="120" placeholder="Enter your age">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Gender</label>
+                                <select class="form-control form-control-gaming" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control form-control-gaming" name="address" rows="3" placeholder="Enter your address"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctor Specific Fields -->
+                    <div id="doctorFields" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Specialization</label>
+                                <select class="form-control form-control-gaming" name="specialization">
+                                    <option value="">Select Specialization</option>
+                                    <option value="general">General Medicine</option>
+                                    <option value="cardiology">Cardiology</option>
+                                    <option value="neurology">Neurology</option>
+                                    <option value="pediatrics">Pediatrics</option>
+                                    <option value="orthopedics">Orthopedics</option>
+                                    <option value="dermatology">Dermatology</option>
+                                    <option value="psychiatry">Psychiatry</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Experience (Years)</label>
+                                <input type="number" class="form-control form-control-gaming" name="experience" min="0" placeholder="Years of experience">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Medical Degree</label>
+                                <input type="text" class="form-control form-control-gaming" name="qualification" placeholder="e.g., MBBS, MD">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">License Number</label>
+                                <input type="text" class="form-control form-control-gaming" name="license" placeholder="Medical license number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-success">Terms and Conditions</a> and <a href="#" class="text-success">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-gaming btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>Already have an account? <a href="login.html" class="text-success">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Platform Statistics</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="10000">0</div>
+                        <p>Active Users</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="500">0</div>
+                        <p>Expert Doctors</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="2500">0</div>
+                        <div class="stat-label">Happy Patients (2026)</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="98">0</div>
+                        <p>Success Rate %</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-gamepad me-2"></i>Clinicalink</h5>
+                    <p>Gaming-inspired healthcare platform for the modern world.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-success">Home</a></li>
+                        <li><a href="login.html" class="text-success">Login</a></li>
+                        <li><a href="admin.html" class="text-success">Admin</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p><i class="fas fa-envelope me-2"></i>support@clinicalink.com</p>
+                    <p><i class="fas fa-phone me-2"></i>+1-234-567-8900</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Global Coverage</p>
+                </div>
+            </div>
+            <hr class="bg-success">
+            <div class="text-center">
+                <p>&copy; 2026 Clinicalink. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Smooth scroll to section
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // User type selection
+        function selectUserType(type, card) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.user-type-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            card.classList.add('selected');
+            
+            // Update hidden input
+            document.getElementById('userType').value = type;
+            
+            // Show/hide relevant fields
+            const patientFields = document.getElementById('patientFields');
+            const doctorFields = document.getElementById('doctorFields');
+            
+            if (type === 'patient') {
+                patientFields.style.display = 'block';
+                doctorFields.style.display = 'none';
+            } else {
+                patientFields.style.display = 'none';
+                doctorFields.style.display = 'block';
+            }
+        }
+
+        // Registration form submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingSpinner').classList.add('active');
+            
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').classList.remove('active');
+                
+                // Show success message
+                alert('Registration successful! Please login to continue.');
+                window.location.href = 'login.html';
+            }, 2000);
+        });
+
+        // Animated counter for stats
+        function animateCounter() {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / speed;
+
+                const updateCounter = () => {
+                    const current = parseInt(counter.innerText);
+                    
+                    if (current < target) {
+                        counter.innerText = Math.ceil(current + increment);
+                        setTimeout(updateCounter, 10);
+                    } else {
+                        counter.innerText = target.toLocaleString();
+                    }
+                };
+
+                updateCounter();
+            });
+        }
+
+        // Initialize animations when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start counter animation when stats section is visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+
+            // Add parallax effect to hero section
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 6rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 30px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .doctor-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .doctor-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .status-indicator-large {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 4px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online {
+            background: var(--neon-green);
+        }
+
+        .status-offline {
+            background: var(--accent-orange);
+        }
+
+        .status-busy {
+            background: var(--warning-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .doctor-info-main {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-specialization-main {
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--neon-green);
+            margin-right: 0.5rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--neon-green);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Availability Schedule */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .time-slot {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .time-slot:hover {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .time-slot.available {
+            border-color: var(--neon-green);
+        }
+
+        .time-slot.booked {
+            border-color: var(--accent-orange);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Specialties Tags */
+        .specialty-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .specialty-tag {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Reviews Section */
+        .review-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .review-rating {
+            color: #ffc107;
+        }
+
+        .review-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .review-date {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+        }
+
+        .btn-message {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        .btn-message:hover {
+            background: var(--neon-blue);
+            color: white;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-orange));
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(155, 89, 182, 0.7);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .doctor-profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .doctor-meta {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .doctor-name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                Clinicalink
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="doctors.html">Doctors</a>
+                <a class="nav-link" href="patients.html">Patients</a>
+                <a class="nav-link" href="login.html">Login</a>
+                <a class="nav-link" href="admin.html">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="doctor-profile-header">
+                <div class="doctor-avatar-large">
+                    <span id="doctorInitials">DR</span>
+                    <div class="status-indicator-large" id="statusIndicator"></div>
+                </div>
+                <div class="doctor-info-main">
+                    <h1 class="doctor-name" id="doctorName">Loading...</h1>
+                    <div class="doctor-specialization-main" id="doctorSpecialization">Loading...</div>
+                    <div class="doctor-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span id="doctorQualification">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-hospital"></i>
+                            <span id="doctorHospital">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="doctorLocation">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-envelope"></i>
+                            <span id="doctorEmail">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <div class="stars" id="doctorRating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="rating-text" id="ratingText">0.0 (0 reviews)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="content-section">
+            <h2 class="section-title">Professional Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalPatients">0</div>
+                    <div class="stat-label">Total Patients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalConsultations">0</div>
+                    <div class="stat-label">Consultations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="successRate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="yearsExperience">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="content-section">
+            <h2 class="section-title">About Dr. <span id="aboutName">Doctor</span></h2>
+            <p id="doctorBio" style="color: var(--text-secondary); line-height: 1.8; font-size: 1.1rem;">
+                Loading biography...
+            </p>
+        </div>
+
+        <!-- Specializations Section -->
+        <div class="content-section">
+            <h2 class="section-title">Areas of Expertise</h2>
+            <div class="specialty-tags" id="specialtyTags">
+                <!-- Specialties will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Education & Qualifications -->
+        <div class="content-section">
+            <h2 class="section-title">Education & Qualifications</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 style="color: var(--neon-blue); margin-bottom: 1rem;">Education</h4>
+                    <div class="meta-item" style="margin-bottom: 1rem;">
+                        <i class="fas fa-university"></i>
+                        <span id="doctorEducation">Loading...</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 style="color: var(--neon-blue); margin-bottom: 1rem;">Professional Details</h4>
+                    <div class="meta-item" style="margin-bottom: 1rem;">
+                        <i class="fas fa-certificate"></i>
+                        <span>License: <span id="doctorLicense">Loading...</span></span>
+                    </div>
+                    <div class="meta-item" style="margin-bottom: 1rem;">
+                        <i class="fas fa-language"></i>
+                        <span>Languages: <span id="doctorLanguages">Loading...</span></span>
+                    </div>
+                    <div class="meta-item" style="margin-bottom: 1rem;">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>Consultation Fee: $<span id="consultationFee">0</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability Section -->
+        <div class="content-section">
+            <h2 class="section-title">Available Time Slots</h2>
+            <div class="schedule-grid" id="availableSlots">
+                <!-- Time slots will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Awards & Recognition -->
+        <div class="content-section">
+            <h2 class="section-title">Awards & Recognition</h2>
+            <div id="awardsList">
+                <!-- Awards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Patient Reviews -->
+        <div class="content-section">
+            <h2 class="section-title">Patient Reviews</h2>
+            <div id="reviewsContainer">
+                <!-- Reviews will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-action btn-primary" onclick="bookConsultation()">
+                <i class="fas fa-calendar-check"></i>
+                Book Consultation
+            </button>
+            <button class="btn-action btn-message" onclick="sendMessage()">
+                <i class="fas fa-comment"></i>
+                Send Message
+            </button>
+            <button class="btn-action btn-secondary" onclick="viewSchedule()">
+                <i class="fas fa-calendar"></i>
+                View Full Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentDoctor = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctorProfile();
+        });
+
+        // Load doctor profile from localStorage or use default
+        function loadDoctorProfile() {
+            const storedDoctor = localStorage.getItem('doctorProfile');
+            
+            if (storedDoctor) {
+                currentDoctor = JSON.parse(storedDoctor);
+            } else {
+                // Default doctor data
+                currentDoctor = {
+                    id: 1,
+                    name: "Dr. John Smith",
+                    specialization: "Cardiology",
+                    experience: 15,
+                    qualification: "MBBS, MD (Cardiology)",
+                    license: "MC12345",
+                    email: "john.smith@clinicalink.com",
+                    phone: "+1-555-0123",
+                    location: "New York, NY",
+                    status: "online",
+                    rating: 4.8,
+                    totalPatients: 1250,
+                    consultations: 3400,
+                    successRate: 98,
+                    bio: "Dr. John Smith is a board-certified cardiologist with over 15 years of experience in treating heart conditions. He specializes in interventional cardiology and has performed over 2000 cardiac procedures.",
+                    languages: ["English", "Spanish", "French"],
+                    education: "Harvard Medical School",
+                    hospital: "New York General Hospital",
+                    consultationFee: 250,
+                    availableSlots: ["10:00 AM", "2:00 PM", "4:00 PM"],
+                    awards: ["Best Cardiologist 2023", "Excellence in Patient Care"],
+                    specialties: ["Heart Disease", "Hypertension", "Arrhythmia", "Chest Pain"]
+                };
+            }
+            
+            renderDoctorProfile();
+        }
+
+        // Render doctor profile
+        function renderDoctorProfile() {
+            // Basic info
+            document.getElementById('doctorInitials').textContent = currentDoctor.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('doctorName').textContent = currentDoctor.name;
+            document.getElementById('doctorSpecialization').textContent = currentDoctor.specialization;
+            document.getElementById('doctorQualification').textContent = currentDoctor.qualification;
+            document.getElementById('doctorHospital').textContent = currentDoctor.hospital;
+            document.getElementById('doctorLocation').textContent = currentDoctor.location;
+            document.getElementById('doctorEmail').textContent = currentDoctor.email;
+            document.getElementById('aboutName').textContent = currentDoctor.name.split(' ')[1];
+            
+            // Status
+            const statusIndicator = document.getElementById('statusIndicator');
+            statusIndicator.className = `status-indicator-large status-${currentDoctor.status}`;
+            
+            // Rating
+            document.getElementById('ratingText').textContent = `${currentDoctor.rating} (${currentDoctor.totalPatients} reviews)`;
+            document.getElementById('doctorRating').innerHTML = generateStars(currentDoctor.rating);
+            
+            // Statistics
+            document.getElementById('totalPatients').textContent = currentDoctor.totalPatients.toLocaleString();
+            document.getElementById('totalConsultations').textContent = currentDoctor.consultations.toLocaleString();
+            document.getElementById('successRate').textContent = `${currentDoctor.successRate}%`;
+            document.getElementById('yearsExperience').textContent = currentDoctor.experience;
+            
+            // Bio
+            document.getElementById('doctorBio').textContent = currentDoctor.bio;
+            
+            // Specialties
+            const specialtyTags = document.getElementById('specialtyTags');
+            specialtyTags.innerHTML = currentDoctor.specialties.map(specialty => 
+                `<span class="specialty-tag">${specialty}</span>`
+            ).join('');
+            
+            // Education and details
+            document.getElementById('doctorEducation').textContent = currentDoctor.education;
+            document.getElementById('doctorLicense').textContent = currentDoctor.license;
+            document.getElementById('doctorLanguages').textContent = currentDoctor.languages.join(', ');
+            document.getElementById('consultationFee').textContent = currentDoctor.consultationFee;
+            
+            // Available slots
+            const availableSlots = document.getElementById('availableSlots');
+            availableSlots.innerHTML = currentDoctor.availableSlots.map((slot, index) => 
+                `<div class="time-slot available" onclick="selectTimeSlot('${slot}')">
+                    <i class="fas fa-clock"></i> ${slot}
+                </div>`
+            ).join('');
+            
+            // Awards
+            const awardsList = document.getElementById('awardsList');
+            awardsList.innerHTML = currentDoctor.awards.map(award => 
+                `<div class="meta-item" style="margin-bottom: 1rem;">
+                    <i class="fas fa-trophy" style="color: #ffc107;"></i>
+                    <span>${award}</span>
+                </div>`
+            ).join('');
+            
+            // Load sample reviews
+            loadSampleReviews();
+        }
+
+        // Generate star rating HTML
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+            const emptyStars = 5 - fullStars - halfStar;
+            
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            if (halfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        // Load sample reviews
+        function loadSampleReviews() {
+            const sampleReviews = [
+                {
+                    name: "Alice Johnson",
+                    rating: 5,
+                    text: "Dr. Smith is an excellent cardiologist. He took the time to explain my condition thoroughly and the treatment was very effective.",
+                    date: "2024-03-20"
+                },
+                {
+                    name: "Bob Williams",
+                    rating: 4,
+                    text: "Very professional and knowledgeable. The consultation was comprehensive and I felt well taken care of.",
+                    date: "2024-03-15"
+                },
+                {
+                    name: "Carol Davis",
+                    rating: 5,
+                    text: "Outstanding doctor! Saved my life with early detection. Highly recommend!",
+                    date: "2024-03-10"
+                }
+            ];
+            
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            reviewsContainer.innerHTML = sampleReviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">${review.name.charAt(0)}</div>
+                            <div>
+                                <div class="fw-bold">${review.name}</div>
+                                <div class="review-rating">${generateStars(review.rating)}</div>
+                            </div>
+                        </div>
+                        <div class="review-date">${formatDate(review.date)}</div>
+                    </div>
+                    <div class="review-text">${review.text}</div>
+                </div>
+            `).join('');
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Action functions
+        function selectTimeSlot(timeSlot) {
+            if (confirm(`Book consultation for ${timeSlot}?`)) {
+                localStorage.setItem('selectedTimeSlot', timeSlot);
+                localStorage.setItem('selectedDoctor', JSON.stringify(currentDoctor));
+                window.location.href = 'book-appointment.html';
+            }
+        }
+
+        function bookConsultation() {
+            localStorage.setItem('selectedDoctor', JSON.stringify(currentDoctor));
+            window.location.href = 'book-appointment.html';
+        }
+
+        function sendMessage() {
+            localStorage.setItem('messageDoctor', JSON.stringify(currentDoctor));
+            window.location.href = 'messages.html';
+        }
+
+        function viewSchedule() {
+            alert('Full schedule view would be implemented here with calendar integration.');
+        }
+    </script>
+</body>
+</html>

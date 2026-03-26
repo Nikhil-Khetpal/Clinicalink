@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 6rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 30px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .patient-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .patient-avatar-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .status-indicator-large {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 4px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online {
+            background: var(--neon-green);
+        }
+
+        .status-offline {
+            background: var(--accent-orange);
+        }
+
+        .status-away {
+            background: var(--warning-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .patient-info-main {
+            flex: 1;
+        }
+
+        .patient-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .patient-age-gender {
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .patient-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--neon-blue);
+            margin-right: 0.5rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        /* Health Score Section */
+        .health-score-display {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--neon-green);
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .score-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Medical Info Grid */
+        .medical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .medical-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .medical-card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+        }
+
+        .medical-card-title {
+            color: var(--neon-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .medical-card-title i {
+            font-size: 1.2rem;
+        }
+
+        /* Condition Tags */
+        .condition-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .condition-tag {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .allergy-tag {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        .medication-tag {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        /* Lifestyle Section */
+        .lifestyle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .lifestyle-item {
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .lifestyle-icon {
+            font-size: 2rem;
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .lifestyle-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .lifestyle-value {
+            color: var(--neon-green);
+        }
+
+        /* Visit History */
+        .visit-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .visit-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .visit-item {
+            position: relative;
+            padding: 1.5rem;
+            background: rgba(10, 10, 10, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .visit-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            border: 2px solid white;
+        }
+
+        .visit-date {
+            color: var(--neon-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .visit-doctor {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .visit-reason {
+            color: var(--text-primary);
+        }
+
+        /* Emergency Alert */
+        .emergency-alert {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid var(--accent-orange);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .emergency-icon {
+            font-size: 2rem;
+            color: var(--accent-orange);
+            animation: emergencyPulse 2s infinite;
+        }
+
+        @keyframes emergencyPulse {
+            0%, 100% { 
+                color: var(--accent-orange);
+                transform: scale(1);
+            }
+            50% { 
+                color: #ff4444;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--neon-blue), var(--accent-purple));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neon-blue);
+            color: white;
+        }
+
+        .btn-emergency {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-emergency:hover {
+            background: #ff4444;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+            color: white;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-orange));
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(155, 89, 182, 0.7);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .patient-profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .patient-meta {
+                justify-content: center;
+            }
+
+            .medical-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .patient-name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                Clinicalink
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="doctors.html">Doctors</a>
+                <a class="nav-link" href="patients.html">Patients</a>
+                <a class="nav-link" href="login.html">Login</a>
+                <a class="nav-link" href="admin.html">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Emergency Alert (if applicable) -->
+        <div class="emergency-alert" id="emergencyAlert" style="display: none;">
+            <div class="emergency-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <h5 class="mb-1">Emergency Contact Required</h5>
+                <p class="mb-0">This patient requires immediate attention. Contact emergency services.</p>
+            </div>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="patient-profile-header">
+                <div class="patient-avatar-large">
+                    <span id="patientInitials">PA</span>
+                    <div class="status-indicator-large" id="statusIndicator"></div>
+                </div>
+                <div class="patient-info-main">
+                    <h1 class="patient-name" id="patientName">Loading...</h1>
+                    <div class="patient-age-gender" id="patientAgeGender">Loading...</div>
+                    <div class="patient-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-envelope"></i>
+                            <span id="patientEmail">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span id="patientPhone">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="patientLocation">Loading...</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user-md"></i>
+                            <span>Primary Doctor: <span id="primaryDoctor">Loading...</span></span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Insurance: <span id="patientInsurance">Loading...</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Score Section -->
+        <div class="content-section">
+            <h2 class="section-title">Health Score Analysis</h2>
+            <div class="health-score-display">
+                <div class="score-circle">
+                    <svg width="200" height="200">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="20"/>
+                        <circle id="scoreProgress" cx="100" cy="100" r="90" fill="none" stroke="url(#gradient)" stroke-width="20" 
+                                stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="gradient">
+                                <stop offset="0%" stop-color="#00ff88"/>
+                                <stop offset="100%" stop-color="#00d4ff"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="score-text" id="healthScoreDisplay">0%</div>
+                </div>
+                <div class="score-label">Overall Health Score</div>
+                <div class="score-description" id="healthScoreDescription">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Medical Information -->
+        <div class="content-section">
+            <h2 class="section-title">Medical Information</h2>
+            <div class="medical-grid">
+                <div class="medical-card">
+                    <div class="medical-card-title">
+                        <i class="fas fa-tint"></i>
+                        Blood Type
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--neon-green); font-weight: bold;" id="bloodType">Loading...</div>
+                </div>
+                
+                <div class="medical-card">
+                    <div class="medical-card-title">
+                        <i class="fas fa-ruler-vertical"></i>
+                        Physical Stats
+                    </div>
+                    <div id="physicalStats">Loading...</div>
+                </div>
+                
+                <div class="medical-card">
+                    <div class="medical-card-title">
+                        <i class="fas fa-calendar-check"></i>
+                        Last Visit
+                    </div>
+                    <div id="lastVisit">Loading...</div>
+                </div>
+                
+                <div class="medical-card">
+                    <div class="medical-card-title">
+                        <i class="fas fa-history"></i>
+                        Total Visits
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--neon-green); font-weight: bold;" id="totalVisits">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Conditions -->
+        <div class="content-section">
+            <h2 class="section-title">Medical Conditions</h2>
+            <div class="condition-tags" id="conditionsList">
+                <!-- Conditions will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Allergies -->
+        <div class="content-section">
+            <h2 class="section-title">Known Allergies</h2>
+            <div class="condition-tags" id="allergiesList">
+                <!-- Allergies will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Current Medications -->
+        <div class="content-section">
+            <h2 class="section-title">Current Medications</h2>
+            <div class="condition-tags" id="medicationsList">
+                <!-- Medications will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Lifestyle Information -->
+        <div class="content-section">
+            <h2 class="section-title">Lifestyle Information</h2>
+            <div class="lifestyle-grid" id="lifestyleGrid">
+                <!-- Lifestyle items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="content-section">
+            <h2 class="section-title">Emergency Contact</h2>
+            <div class="meta-item" style="font-size: 1.1rem;">
+                <i class="fas fa-phone-alt" style="color: var(--accent-orange);"></i>
+                <span id="emergencyContact">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Visit History -->
+        <div class="content-section">
+            <h2 class="section-title">Recent Visit History</h2>
+            <div class="visit-timeline" id="visitHistory">
+                <!-- Visit history will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-action btn-primary" onclick="scheduleConsultation()">
+                <i class="fas fa-calendar-check"></i>
+                Schedule Consultation
+            </button>
+            <button class="btn-action btn-secondary" onclick="sendMessage()">
+                <i class="fas fa-comment"></i>
+                Send Message
+            </button>
+            <button class="btn-action btn-secondary" onclick="downloadRecords()">
+                <i class="fas fa-download"></i>
+                Download Records
+            </button>
+            <button class="btn-action btn-emergency" onclick="emergencyContact()">
+                <i class="fas fa-ambulance"></i>
+                Emergency Contact
+            </button>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentPatient = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPatientProfile();
+        });
+
+        // Load patient profile from localStorage or use default
+        function loadPatientProfile() {
+            const storedPatient = localStorage.getItem('patientProfile');
+            
+            if (storedPatient) {
+                currentPatient = JSON.parse(storedPatient);
+            } else {
+                // Default patient data
+                currentPatient = {
+                    id: 1,
+                    name: "Alice Johnson",
+                    age: 28,
+                    gender: "Female",
+                    email: "alice.johnson@email.com",
+                    phone: "+1-555-0101",
+                    location: "New York, NY",
+                    status: "online",
+                    healthScore: 95,
+                    bloodType: "O+",
+                    height: "5'6\"",
+                    weight: "130 lbs",
+                    allergies: ["Penicillin", "Peanuts"],
+                    conditions: ["Asthma", "Seasonal Allergies"],
+                    medications: ["Albuterol", "Loratadine"],
+                    lastVisit: "2024-03-20",
+                    totalVisits: 15,
+                    emergencyContact: "Bob Johnson (Husband) - +1-555-0102",
+                    insurance: "BlueCross BlueShield",
+                    doctor: "Dr. John Smith",
+                    membershipLevel: "Gold",
+                    joinDate: "2023-01-15",
+                    emergency: false,
+                    notes: "Patient responds well to treatment. Prefers online consultations.",
+                    lifestyle: {
+                        exercise: "Regular - 3x per week",
+                        diet: "Balanced",
+                        smoking: "Non-smoker",
+                        alcohol: "Social"
+                    },
+                    visitHistory: [
+                        { date: "2024-03-20", doctor: "Dr. John Smith", reason: "Routine checkup" },
+                        { date: "2024-02-15", doctor: "Dr. John Smith", reason: "Asthma follow-up" },
+                        { date: "2024-01-10", doctor: "Dr. Emily Davis", reason: "Skin consultation" }
+                    ]
+                };
+            }
+            
+            renderPatientProfile();
+        }
+
+        // Render patient profile
+        function renderPatientProfile() {
+            // Basic info
+            document.getElementById('patientInitials').textContent = currentPatient.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('patientName').textContent = currentPatient.name;
+            document.getElementById('patientAgeGender').textContent = `${currentPatient.age} years old • ${currentPatient.gender}`;
+            document.getElementById('patientEmail').textContent = currentPatient.email;
+            document.getElementById('patientPhone').textContent = currentPatient.phone;
+            document.getElementById('patientLocation').textContent = currentPatient.location;
+            document.getElementById('primaryDoctor').textContent = currentPatient.doctor;
+            document.getElementById('patientInsurance').textContent = currentPatient.insurance;
+            
+            // Status
+            const statusIndicator = document.getElementById('statusIndicator');
+            statusIndicator.className = `status-indicator-large status-${currentPatient.status}`;
+            
+            // Emergency alert
+            if (currentPatient.emergency) {
+                document.getElementById('emergencyAlert').style.display = 'flex';
+            }
+            
+            // Health score
+            renderHealthScore();
+            
+            // Medical info
+            document.getElementById('bloodType').textContent = currentPatient.bloodType;
+            document.getElementById('physicalStats').innerHTML = `
+                <div>Height: ${currentPatient.height}</div>
+                <div>Weight: ${currentPatient.weight}</div>
+            `;
+            document.getElementById('lastVisit').textContent = formatDate(currentPatient.lastVisit);
+            document.getElementById('totalVisits').textContent = currentPatient.totalVisits;
+            
+            // Medical conditions
+            const conditionsList = document.getElementById('conditionsList');
+            conditionsList.innerHTML = currentPatient.conditions.map(condition => 
+                `<span class="condition-tag">${condition}</span>`
+            ).join('');
+            
+            // Allergies
+            const allergiesList = document.getElementById('allergiesList');
+            allergiesList.innerHTML = currentPatient.allergies.map(allergy => 
+                `<span class="condition-tag allergy-tag">${allergy}</span>`
+            ).join('');
+            
+            // Medications
+            const medicationsList = document.getElementById('medicationsList');
+            medicationsList.innerHTML = currentPatient.medications.map(medication => 
+                `<span class="condition-tag medication-tag">${medication}</span>`
+            ).join('');
+            
+            // Lifestyle
+            renderLifestyle();
+            
+            // Emergency contact
+            document.getElementById('emergencyContact').textContent = currentPatient.emergencyContact;
+            
+            // Visit history
+            renderVisitHistory();
+        }
+
+        // Render health score with animation
+        function renderHealthScore() {
+            const score = currentPatient.healthScore;
+            const circumference = 2 * Math.PI * 90;
+            const offset = circumference - (score / 100) * circumference;
+            
+            document.getElementById('healthScoreDisplay').textContent = `${score}%`;
+            document.getElementById('scoreProgress').style.strokeDashoffset = offset;
+            
+            // Description based on score
+            let description = '';
+            if (score >= 90) {
+                description = 'Excellent health! Keep up the great work with your healthy lifestyle choices.';
+            } else if (score >= 70) {
+                description = 'Good health status. Continue with current health practices and regular checkups.';
+            } else if (score >= 50) {
+                description = 'Fair health condition. Consider improving lifestyle habits and follow medical advice.';
+            } else {
+                description = 'Health needs attention. Please consult with your healthcare provider regularly.';
+            }
+            
+            document.getElementById('healthScoreDescription').textContent = description;
+        }
+
+        // Render lifestyle information
+        function renderLifestyle() {
+            const lifestyleGrid = document.getElementById('lifestyleGrid');
+            const lifestyleItems = [
+                { icon: 'fa-running', label: 'Exercise', value: currentPatient.lifestyle.exercise },
+                { icon: 'fa-utensils', label: 'Diet', value: currentPatient.lifestyle.diet },
+                { icon: 'fa-smoking-ban', label: 'Smoking', value: currentPatient.lifestyle.smoking },
+                { icon: 'fa-wine-glass', label: 'Alcohol', value: currentPatient.lifestyle.alcohol }
+            ];
+            
+            lifestyleGrid.innerHTML = lifestyleItems.map(item => `
+                <div class="lifestyle-item">
+                    <div class="lifestyle-icon">
+                        <i class="fas ${item.icon}"></i>
+                    </div>
+                    <div class="lifestyle-label">${item.label}</div>
+                    <div class="lifestyle-value">${item.value}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render visit history
+        function renderVisitHistory() {
+            const visitHistory = document.getElementById('visitHistory');
+            const visits = currentPatient.visitHistory || [];
+            
+            visitHistory.innerHTML = visits.map(visit => `
+                <div class="visit-item">
+                    <div class="visit-date">${formatDate(visit.date)}</div>
+                    <div class="visit-doctor">Doctor: ${visit.doctor}</div>
+                    <div class="visit-reason">Reason: ${visit.reason}</div>
+                </div>
+            `).join('');
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Action functions
+        function scheduleConsultation() {
+            localStorage.setItem('selectedPatient', JSON.stringify(currentPatient));
+            window.location.href = 'book-appointment.html';
+        }
+
+        function sendMessage() {
+            localStorage.setItem('messagePatient', JSON.stringify(currentPatient));
+            window.location.href = 'messages.html';
+        }
+
+        function downloadRecords() {
+            alert('Medical records download functionality would be implemented here with PDF generation.');
+        }
+
+        function emergencyContact() {
+            if (confirm(`Call emergency contact: ${currentPatient.emergencyContact}?`)) {
+                alert(`Would initiate call to ${currentPatient.emergencyContact}`);
+            }
+        }
+    </script>
+</body>
+</html>
