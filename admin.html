@@ -265,6 +265,12 @@
             border: 1px solid var(--neon-green);
         }
 
+        .status-busy {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
         .status-offline {
             background: rgba(255, 107, 107, 0.2);
             color: var(--accent-orange);
@@ -572,10 +578,13 @@
             <section id="locations-section" class="content-section" style="display: none;">
                 <div class="data-section">
                     <div class="section-header">
-                        <h3 class="section-title">Live Locations</h3>
-                        <button class="btn btn-gaming btn-sm" onclick="refreshLocations()">
-                            <i class="fas fa-sync"></i> Refresh
-                        </button>
+                        <h3 class="section-title">Live Locations - India</h3>
+                        <div class="d-flex align-items-center gap-3">
+                            <span id="lastUpdateTime" class="text-warning" style="font-size: 14px;">Initializing...</span>
+                            <button class="btn btn-gaming btn-sm" onclick="refreshLocations()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Map Container -->
@@ -703,34 +712,40 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
             loadDashboardData();
-            initializeMap();
+            // Don't initialize map immediately - it will be initialized when locations section is shown
             startLocationTracking();
         });
 
         // Initialize mock data
         function initializeData() {
             appointments = [
-                { id: 1, patient: 'Alice Johnson', doctor: 'Dr. John Smith', datetime: '2024-03-26 10:00', type: 'Online', status: 'scheduled', fee: 150, patientLocation: { lat: 40.7128, lng: -74.0060 }, doctorLocation: { lat: 40.7589, lng: -73.9851 } },
-                { id: 2, patient: 'Bob Smith', doctor: 'Dr. Sarah Johnson', datetime: '2024-03-26 14:00', type: 'Offline', status: 'completed', fee: 200, patientLocation: { lat: 40.7489, lng: -73.9680 }, doctorLocation: { lat: 40.7614, lng: -73.9776 } },
-                { id: 3, patient: 'Carol Williams', doctor: 'Dr. Michael Brown', datetime: '2024-03-27 09:00', type: 'Online', status: 'scheduled', fee: 180, patientLocation: { lat: 40.7282, lng: -73.9942 }, doctorLocation: { lat: 40.7489, lng: -73.9680 } },
-                { id: 4, patient: 'David Brown', doctor: 'Dr. Emily Davis', datetime: '2024-03-25 16:00', type: 'Online', status: 'cancelled', fee: 120, patientLocation: { lat: 40.7580, lng: -73.9855 }, doctorLocation: { lat: 40.7614, lng: -73.9776 } },
-                { id: 5, patient: 'Eva Martinez', doctor: 'Dr. Robert Wilson', datetime: '2024-03-27 11:00', type: 'Offline', status: 'scheduled', fee: 175, patientLocation: { lat: 40.7128, lng: -74.0060 }, doctorLocation: { lat: 40.7589, lng: -73.9851 } }
+                { id: 1, patient: 'Alice Johnson', doctor: 'Dr. John Smith', datetime: '2026-04-01 10:00', type: 'Online', status: 'scheduled', fee: 150, patientLocation: { lat: 28.6139, lng: 77.2090 }, doctorLocation: { lat: 19.0760, lng: 72.8777 } },
+                { id: 2, patient: 'Bob Smith', doctor: 'Dr. Sarah Johnson', datetime: '2026-04-01 14:00', type: 'Offline', status: 'completed', fee: 200, patientLocation: { lat: 12.9716, lng: 77.5946 }, doctorLocation: { lat: 22.5726, lng: 88.3639 } },
+                { id: 3, patient: 'Carol Williams', doctor: 'Dr. Michael Brown', datetime: '2026-04-02 09:00', type: 'Online', status: 'scheduled', fee: 180, patientLocation: { lat: 26.9124, lng: 75.7873 }, doctorLocation: { lat: 28.7041, lng: 77.1025 } },
+                { id: 4, patient: 'David Brown', doctor: 'Dr. Emily Davis', datetime: '2026-03-31 16:00', type: 'Online', status: 'cancelled', fee: 120, patientLocation: { lat: 17.3850, lng: 78.4867 }, doctorLocation: { lat: 23.2599, lng: 77.4126 } },
+                { id: 5, patient: 'Eva Martinez', doctor: 'Dr. Robert Wilson', datetime: '2026-04-02 11:00', type: 'Offline', status: 'scheduled', fee: 175, patientLocation: { lat: 21.1458, lng: 79.0882 }, doctorLocation: { lat: 18.5204, lng: 73.8567 } }
             ];
 
             doctors = [
-                { id: 1, name: 'Dr. John Smith', email: 'john@clinicalink.com', specialization: 'Cardiology', status: 'online', location: { lat: 40.7589, lng: -73.9851 } },
-                { id: 2, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Pediatrics', status: 'online', location: { lat: 40.7614, lng: -73.9776 } },
-                { id: 3, name: 'Dr. Michael Brown', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'offline', location: { lat: 40.7489, lng: -73.9680 } },
-                { id: 4, name: 'Dr. Emily Davis', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'online', location: { lat: 40.7282, lng: -73.9942 } },
-                { id: 5, name: 'Dr. Robert Wilson', email: 'robert@clinicalink.com', specialization: 'Orthopedics', status: 'offline', location: { lat: 40.7580, lng: -73.9855 } }
+                { id: 1, name: 'Dr. John Smith', email: 'john@clinicalink.com', specialization: 'Cardiology', status: 'online', location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
+                { id: 2, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Pediatrics', status: 'online', location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
+                { id: 3, name: 'Dr. Michael Brown', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'offline', location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
+                { id: 4, name: 'Dr. Emily Davis', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'online', location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
+                { id: 5, name: 'Dr. Robert Wilson', email: 'robert@clinicalink.com', specialization: 'Orthopedics', status: 'offline', location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
+                { id: 6, name: 'Dr. Lisa Anderson', email: 'lisa@clinicalink.com', specialization: 'Psychiatry', status: 'online', location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
+                { id: 7, name: 'Dr. James Wilson', email: 'james@clinicalink.com', specialization: 'General Medicine', status: 'online', location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' },
+                { id: 8, name: 'Dr. Maria Garcia', email: 'maria@clinicalink.com', specialization: 'Gynecology', status: 'busy', location: { lat: 18.5204, lng: 73.8567 }, city: 'Pune' }
             ];
 
             patients = [
-                { id: 1, name: 'Alice Johnson', email: 'alice@email.com', phone: '123-456-7890', healthScore: 95, location: { lat: 40.7128, lng: -74.0060 } },
-                { id: 2, name: 'Bob Smith', email: 'bob@email.com', phone: '234-567-8901', healthScore: 88, location: { lat: 40.7489, lng: -73.9680 } },
-                { id: 3, name: 'Carol Williams', email: 'carol@email.com', phone: '345-678-9012', healthScore: 92, location: { lat: 40.7282, lng: -73.9942 } },
-                { id: 4, name: 'David Brown', email: 'david@email.com', phone: '456-789-0123', healthScore: 85, location: { lat: 40.7580, lng: -73.9855 } },
-                { id: 5, name: 'Eva Martinez', email: 'eva@email.com', phone: '567-890-1234', healthScore: 90, location: { lat: 40.7128, lng: -74.0060 } }
+                { id: 1, name: 'Alice Johnson', email: 'alice@email.com', phone: '+91-9876543210', healthScore: 95, location: { lat: 28.6139, lng: 77.2090 }, city: 'New Delhi' },
+                { id: 2, name: 'Bob Smith', email: 'bob@email.com', phone: '+91-9876543211', healthScore: 88, location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
+                { id: 3, name: 'Carol Williams', email: 'carol@email.com', phone: '+91-9876543212', healthScore: 92, location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
+                { id: 4, name: 'David Brown', email: 'david@email.com', phone: '+91-9876543213', healthScore: 85, location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
+                { id: 5, name: 'Eva Martinez', email: 'eva@email.com', phone: '+91-9876543214', healthScore: 90, location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
+                { id: 6, name: 'Frank Chen', email: 'frank@email.com', phone: '+91-9876543215', healthScore: 87, location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
+                { id: 7, name: 'Grace Lee', email: 'grace@email.com', phone: '+91-9876543216', healthScore: 93, location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
+                { id: 8, name: 'Henry Kumar', email: 'henry@email.com', phone: '+91-9876543217', healthScore: 89, location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' }
             ];
         }
 
@@ -799,92 +814,171 @@
 
         // Initialize map
         function initializeMap() {
-            // Initialize map centered on New York
-            map = L.map('liveMap').setView([40.7128, -74.0060], 12);
+            // Wait a bit for the DOM to be ready
+            setTimeout(() => {
+                try {
+                    // Check if map container exists
+                    const mapContainer = document.getElementById('liveMap');
+                    if (!mapContainer) {
+                        console.error('Map container not found');
+                        return;
+                    }
 
-            // Add tile layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+                    // Initialize map centered on India (New Delhi)
+                    map = L.map('liveMap').setView([28.6139, 77.2090], 5);
 
-            // Add markers for doctors and patients
-            updateMapMarkers();
+                    // Add tile layer
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    // Add markers for doctors and patients
+                    updateMapMarkers();
+                    
+                    console.log('Map initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing map:', error);
+                }
+            }, 500);
         }
 
         // Update map markers
         function updateMapMarkers() {
-            // Clear existing markers
-            doctorMarkers.forEach(marker => map.removeLayer(marker));
-            patientMarkers.forEach(marker => map.removeLayer(marker));
-            doctorMarkers = [];
-            patientMarkers = [];
+            // Check if map is initialized
+            if (!map) {
+                console.log('Map not initialized yet, skipping marker update');
+                return;
+            }
 
-            // Add doctor markers
-            doctors.forEach(doctor => {
-                const marker = L.marker([doctor.location.lat, doctor.location.lng], {
-                    icon: L.divIcon({
-                        className: 'custom-marker',
-                        html: `<div style="background: ${doctor.status === 'online' ? '#00ff88' : '#ff6b6b'}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-user-md" style="color: white; font-size: 10px;"></i>
-                               </div>`,
-                        iconSize: [20, 20]
-                    })
-                }).addTo(map);
+            try {
+                // Clear existing markers
+                doctorMarkers.forEach(marker => {
+                    if (map.hasLayer(marker)) {
+                        map.removeLayer(marker);
+                    }
+                });
+                patientMarkers.forEach(marker => {
+                    if (map.hasLayer(marker)) {
+                        map.removeLayer(marker);
+                    }
+                });
+                doctorMarkers = [];
+                patientMarkers = [];
 
-                marker.bindPopup(`
-                    <strong>${doctor.name}</strong><br>
-                    ${doctor.specialization}<br>
-                    Status: <span class="status-badge status-${doctor.status}">${doctor.status}</span>
-                `);
+                // Add doctor markers
+                doctors.forEach(doctor => {
+                    const marker = L.marker([doctor.location.lat, doctor.location.lng], {
+                        icon: L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div style="background: ${doctor.status === 'online' ? '#00ff88' : doctor.status === 'busy' ? '#ffc107' : '#ff6b6b'}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                        <i class="fas fa-user-md" style="color: white; font-size: 12px;"></i>
+                                       </div>`,
+                            iconSize: [24, 24]
+                        })
+                    }).addTo(map);
 
-                doctorMarkers.push(marker);
-            });
+                    marker.bindPopup(`
+                        <div style="min-width: 200px;">
+                            <strong style="color: #00ff88; font-size: 16px;">${doctor.name}</strong><br>
+                            <span style="color: #00d4ff;">${doctor.specialization}</span><br>
+                            <span style="color: #ff6b6b;">📍 ${doctor.city}</span><br>
+                            Status: <span class="status-badge status-${doctor.status}" style="padding: 2px 8px; border-radius: 12px; font-size: 12px;">${doctor.status.toUpperCase()}</span><br>
+                            <span style="color: #888; font-size: 11px;">📧 ${doctor.email}</span>
+                        </div>
+                    `);
 
-            // Add patient markers
-            patients.forEach(patient => {
-                const marker = L.marker([patient.location.lat, patient.location.lng], {
-                    icon: L.divIcon({
-                        className: 'custom-marker',
-                        html: `<div style="background: #00d4ff; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-user" style="color: white; font-size: 10px;"></i>
-                               </div>`,
-                        iconSize: [20, 20]
-                    })
-                }).addTo(map);
+                    doctorMarkers.push(marker);
+                });
 
-                marker.bindPopup(`
-                    <strong>${patient.name}</strong><br>
-                    Health Score: ${patient.healthScore}%<br>
-                    Phone: ${patient.phone}
-                `);
+                // Add patient markers
+                patients.forEach(patient => {
+                    const marker = L.marker([patient.location.lat, patient.location.lng], {
+                        icon: L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div style="background: #00d4ff; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                        <i class="fas fa-user" style="color: white; font-size: 12px;"></i>
+                                       </div>`,
+                            iconSize: [24, 24]
+                        })
+                    }).addTo(map);
 
-                patientMarkers.push(marker);
-            });
+                    marker.bindPopup(`
+                        <div style="min-width: 200px;">
+                            <strong style="color: #00d4ff; font-size: 16px;">${patient.name}</strong><br>
+                            <span style="color: #00ff88;">Health Score: ${patient.healthScore}%</span><br>
+                            <span style="color: #ff6b6b;">📍 ${patient.city}</span><br>
+                            <span style="color: #888; font-size: 11px;">📱 ${patient.phone}</span><br>
+                            <span style="color: #888; font-size: 11px;">📧 ${patient.email}</span>
+                        </div>
+                    `);
+
+                    patientMarkers.push(marker);
+                });
+
+                console.log('Markers updated successfully');
+            } catch (error) {
+                console.error('Error updating markers:', error);
+            }
         }
 
         // Start location tracking
         function startLocationTracking() {
-            // Update locations every 30 seconds
+            // Update locations every 10 seconds for more real-time feel
             setInterval(() => {
                 updateMockLocations();
                 updateMapMarkers();
                 updateLocationLists();
-            }, 30000);
+                updateLastUpdateTime();
+            }, 10000);
+            
+            // Initial update
+            updateLastUpdateTime();
         }
 
-        // Update mock locations (simulate movement)
+        // Update mock locations (simulate movement within Indian cities)
         function updateMockLocations() {
             doctors.forEach(doctor => {
-                // Slightly change location to simulate movement
-                doctor.location.lat += (Math.random() - 0.5) * 0.001;
-                doctor.location.lng += (Math.random() - 0.5) * 0.001;
+                // Simulate small movement within city bounds (realistic for doctors in hospitals/clinics)
+                const movementRange = 0.002; // Small movement within hospital area
+                doctor.location.lat += (Math.random() - 0.5) * movementRange;
+                doctor.location.lng += (Math.random() - 0.5) * movementRange;
+                
+                // Randomly change status occasionally
+                if (Math.random() < 0.1) { // 10% chance to change status
+                    const statuses = ['online', 'busy', 'offline'];
+                    const currentStatusIndex = statuses.indexOf(doctor.status);
+                    const newStatusIndex = (currentStatusIndex + 1) % statuses.length;
+                    doctor.status = statuses[newStatusIndex];
+                }
             });
 
             patients.forEach(patient => {
-                // Slightly change location to simulate movement
-                patient.location.lat += (Math.random() - 0.5) * 0.001;
-                patient.location.lng += (Math.random() - 0.5) * 0.001;
+                // Simulate movement for patients (larger range as they move around)
+                const movementRange = 0.005; // Larger movement for patients
+                patient.location.lat += (Math.random() - 0.5) * movementRange;
+                patient.location.lng += (Math.random() - 0.5) * movementRange;
+                
+                // Occasionally update health score
+                if (Math.random() < 0.05) { // 5% chance to update health
+                    const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
+                    patient.healthScore = Math.max(70, Math.min(100, patient.healthScore + change));
+                }
             });
+        }
+
+        // Update last update time
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false 
+            });
+            const lastUpdateElement = document.getElementById('lastUpdateTime');
+            if (lastUpdateElement) {
+                lastUpdateElement.textContent = `Last updated: ${timeString} (IST)`;
+            }
         }
 
         // Update location lists
@@ -897,7 +991,7 @@
                         <div class="user-avatar me-2">${doctor.name.charAt(0)}</div>
                         <div class="flex-grow-1">
                             <div class="fw-bold">${doctor.name}</div>
-                            <small class="text-muted">${doctor.specialization}</small>
+                            <small class="text-muted">${doctor.specialization} • 📍 ${doctor.city}</small>
                         </div>
                         <span class="status-badge status-${doctor.status}">${doctor.status}</span>
                     </div>
@@ -912,7 +1006,7 @@
                         <div class="user-avatar me-2">${patient.name.charAt(0)}</div>
                         <div class="flex-grow-1">
                             <div class="fw-bold">${patient.name}</div>
-                            <small class="text-muted">Health: ${patient.healthScore}%</small>
+                            <small class="text-muted">Health: ${patient.healthScore}% • 📍 ${patient.city}</small>
                         </div>
                         <span class="location-badge">
                             <i class="fas fa-map-marker-alt"></i>
@@ -922,7 +1016,43 @@
             }
         }
 
-        // Show section
+        // Refresh locations manually
+        function refreshLocations() {
+            updateMockLocations();
+            updateMapMarkers();
+            updateLocationLists();
+            updateLastUpdateTime();
+            
+            // Show refresh animation
+            const refreshBtn = event.target.closest('button');
+            if (refreshBtn) {
+                const icon = refreshBtn.querySelector('i');
+                icon.classList.add('fa-spin');
+                setTimeout(() => {
+                    icon.classList.remove('fa-spin');
+                }, 1000);
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadDashboardData();
+            if (map) {
+                updateMapMarkers();
+            }
+            updateLocationLists();
+            updateLastUpdateTime();
+            
+            // Show refresh animation
+            const refreshBtn = event.target.closest('button');
+            if (refreshBtn) {
+                const icon = refreshBtn.querySelector('i');
+                icon.classList.add('fa-spin');
+                setTimeout(() => {
+                    icon.classList.remove('fa-spin');
+                }, 1000);
+            }
+        }
         function showSection(sectionName) {
             // Hide all sections
             document.querySelectorAll('.content-section').forEach(section => {
@@ -933,31 +1063,23 @@
             const targetSection = document.getElementById(sectionName + '-section');
             if (targetSection) {
                 targetSection.style.display = 'block';
+                
+                // Initialize map if locations section is shown
+                if (sectionName === 'locations' && !map) {
+                    setTimeout(() => {
+                        initializeMap();
+                    }, 100);
+                }
             }
             
             // Update sidebar
-            document.querySelectorAll('.sidebar-item').forEach(item => {
+            document.querySelectorAll('.sidebar-link').forEach(item => {
                 item.classList.remove('active');
             });
             
             const activeItem = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
             if (activeItem) {
                 activeItem.classList.add('active');
-            }
-
-            // Load section-specific data
-            if (sectionName === 'appointments') {
-                loadAppointmentsTable();
-            } else if (sectionName === 'locations') {
-                setTimeout(() => {
-                    map.invalidateSize();
-                    updateMapMarkers();
-                    updateLocationLists();
-                }, 100);
-            } else if (sectionName === 'doctors') {
-                loadDoctorsTable();
-            } else if (sectionName === 'patients') {
-                loadPatientsTable();
             }
         }
 
