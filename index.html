@@ -443,6 +443,157 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Profile Dropdown Styles */
+        .user-profile-section {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .profile-btn:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--neon-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .profile-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .profile-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-btn:hover .profile-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            min-width: 280px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .profile-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-avatar-large {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .profile-name-large {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .profile-dropdown-body {
+            padding: 10px 0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .profile-dropdown-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+        }
+
+        .profile-dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: rgba(0, 255, 136, 0.2);
+            margin: 10px 0;
+        }
+
+        .logout-item {
+            color: #ff6b6b;
+        }
+
+        .logout-item:hover {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
@@ -512,6 +663,58 @@
                 </ul>
             </div>
         </div>
+        <div class="user-profile-section" id="userProfileSection">
+            <div class="profile-dropdown">
+                <button class="profile-btn" id="profileBtn" onclick="toggleProfileDropdown()">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="profile-name" id="profileName">Guest</span>
+                    <i class="fas fa-chevron-down profile-arrow"></i>
+                </button>
+                <div class="profile-dropdown-menu" id="profileDropdown">
+                    <div class="profile-dropdown-header">
+                        <div class="profile-info">
+                            <div class="profile-avatar-large">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-details">
+                                <div class="profile-name-large" id="profileNameLarge">Guest User</div>
+                                <div class="profile-email" id="profileEmail">Not logged in</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown-body">
+                        <a href="register.html" class="profile-dropdown-item">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Register</span>
+                        </a>
+                        <a href="login.html" class="profile-dropdown-item">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </a>
+                        <a href="admin.html" class="profile-dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Admin Panel</span>
+                        </a>
+                        <div class="profile-dropdown-divider"></div>
+                        <a href="#" class="profile-dropdown-item" onclick="showRegisteredRecords()">
+                            <i class="fas fa-database"></i>
+                            <span>My Records</span>
+                        </a>
+                        <a href="#" class="profile-dropdown-item" onclick="showAppointments()">
+                            <i class="fas fa-calendar"></i>
+                            <span>Appointments</span>
+                        </a>
+                        <div class="profile-dropdown-divider"></div>
+                        <a href="#" class="profile-dropdown-item logout-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <!-- Hero Section -->
@@ -553,11 +756,11 @@
                             <li><i class="fas fa-check text-success me-2"></i>Achievements</li>
                             <li><i class="fas fa-check text-success me-2"></i>Leaderboards</li>
                         </ul>
-                        <button class="btn btn-gaming btn-sm mt-3" onclick="alert('Health Challenges button clicked!'); showLoginMessage();">
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='register.html'">
                             <i class="fas fa-play me-2"></i>Start Challenges
                         </button>
-                        <button class="btn btn-outline-gaming btn-sm mt-1" onclick="testButton()">
-                            <i class="fas fa-test me-2"></i>Test Button
+                        <button class="btn btn-outline-gaming btn-sm mt-1" onclick="window.location.href='login.html'">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
                         </button>
                     </div>
                 </div>
@@ -574,7 +777,7 @@
                             <li><i class="fas fa-check text-success me-2"></i>Online Consultations</li>
                             <li><i class="fas fa-check text-success me-2"></i>24/7 Availability</li>
                         </ul>
-                        <button class="btn btn-gaming btn-sm mt-3" onclick="alert('Expert Doctors button clicked!'); showLoginMessage();">
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='doctors.html'">
                             <i class="fas fa-user-md me-2"></i>View Doctors
                         </button>
                     </div>
@@ -592,7 +795,7 @@
                             <li><i class="fas fa-check text-success me-2"></i>Nearby Hospitals</li>
                             <li><i class="fas fa-check text-success me-2"></i>Emergency Alerts</li>
                         </ul>
-                        <button class="btn btn-gaming btn-sm mt-3" onclick="alert('Emergency Services button clicked!'); showLoginMessage();">
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='book-appointment.html'">
                             <i class="fas fa-ambulance me-2"></i>Emergency Help
                         </button>
                     </div>
@@ -612,7 +815,7 @@
                             <li><i class="fas fa-check text-success me-2"></i>File Sharing</li>
                             <li><i class="fas fa-check text-success me-2"></i>Video Calls</li>
                         </ul>
-                        <button class="btn btn-gaming btn-sm mt-3" onclick="alert('Real-time Chat button clicked!'); showLoginMessage();">
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='messages.html'">
                             <i class="fas fa-comments me-2"></i>Start Chat
                         </button>
                     </div>
@@ -630,8 +833,8 @@
                             <li><i class="fas fa-check text-success me-2"></i>Easy Access</li>
                             <li><i class="fas fa-check text-success me-2"></i>Prescription Management</li>
                         </ul>
-                        <button class="btn btn-gaming btn-sm mt-3" onclick="alert('Digital Records button clicked!'); showLoginMessage();">
-                            <i class="fas fa-file-medical me-2"></i>View Records
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='patient-profile.html'">
+                            <i class="fas fa-robot me-2"></i>Digital Records
                         </button>
                     </div>
                 </div>
@@ -648,6 +851,89 @@
                             <li><i class="fas fa-check text-success me-2"></i>Group Activities</li>
                             <li><i class="fas fa-check text-success me-2"></i>Rewards System</li>
                         </ul>
+                        <button class="btn btn-gaming btn-sm mt-3" onclick="window.location.href='register.html'">
+                            <i class="fas fa-trophy me-2"></i>Join Challenges
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features Section -->
+    <section class="platform-features-section py-5" id="platform-features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold text-white">Platform Features</h2>
+                <p class="lead text-muted">Advanced healthcare communication tools</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Live Chat Feature -->
+                <div class="col-md-6">
+                    <div class="platform-feature-card">
+                        <div class="platform-feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4 class="text-white mb-3">Live Chat</h4>
+                        <p class="text-muted mb-4">Connect with doctors in real-time through our secure messaging platform. Get instant medical advice and consultations.</p>
+                        
+                        <ul class="list-unstyled text-muted mb-4">
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Real-time messaging</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Multiple doctor availability</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>File and image sharing</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Video call support</li>
+                        </ul>
+                        
+                        <button class="btn btn-gaming btn-lg w-100" onclick="window.location.href='messages.html'">
+                            <i class="fas fa-comments me-2"></i>Access Live Chat
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- AI Assistant Feature -->
+                <div class="col-md-6">
+                    <div class="platform-feature-card">
+                        <div class="platform-feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h4 class="text-white mb-3">AI Health Assistant</h4>
+                        <p class="text-muted mb-4">Get instant health information, symptom analysis, and medical advice powered by advanced AI technology.</p>
+                        
+                        <ul class="list-unstyled text-muted mb-4">
+                            <li><i class="fas fa-check-circle text-success me-2"></i>24/7 availability</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Latest medical information</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Symptom checker</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Medicine information</li>
+                        </ul>
+                        
+                        <button class="btn btn-gaming btn-lg w-100" onclick="window.location.href='patient-profile.html'">
+                            <i class="fas fa-robot me-2"></i>Launch AI Assistant
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Platform Info -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="platform-info-card text-center">
+                        <h4 class="text-white mb-3">Seamless Integration</h4>
+                        <p class="text-muted mb-4">Our platform features work together to provide you with comprehensive healthcare solutions. Switch between live doctor consultations and AI assistance as needed.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="platform-stat">
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Expert Doctors</div>
+                            </div>
+                            <div class="platform-stat">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">AI Support</div>
+                            </div>
+                            <div class="platform-stat">
+                                <div class="stat-number">50K+</div>
+                                <div class="stat-label">Happy Patients</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1118,6 +1404,12 @@
             line-height: 1.4;
         }
 
+        .mes.stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
         .message-time {
             font-size: 0.7rem;
             color: var(--text-secondary);
@@ -1164,16 +1456,26 @@
         }
 
         /* Chat widget minimized state */
-        .chat-widget.minimized {
+        .login-message.minimized {
             height: 60px;
         }
 
-        .chat-widget.minimized .chat-body {
-            display: none;
+        /* Platform Features Section Styles */
+        .platform-features-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Scrollbar for chat messages */
-        .chat-messages::-webkit-scrollbar {
+        .platform-features-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,255,136,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
             width: 6px;
         }
 
@@ -1245,6 +1547,122 @@
     </style>
 
     <script>
+        // Profile dropdown functionality
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.profile-dropdown')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        // Load user profile information
+        function loadUserProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const profileName = document.getElementById('profileName');
+            const profileNameLarge = document.getElementById('profileNameLarge');
+            const profileEmail = document.getElementById('profileEmail');
+            
+            if (currentUser) {
+                profileName.textContent = currentUser.fullName || currentUser.name || 'User';
+                profileNameLarge.textContent = currentUser.fullName || currentUser.name || 'User';
+                profileEmail.textContent = currentUser.email || 'No email';
+            } else {
+                profileName.textContent = 'Guest';
+                profileNameLarge.textContent = 'Guest User';
+                profileEmail.textContent = 'Not logged in';
+            }
+        }
+
+        // Show registered records
+        function showRegisteredRecords() {
+            const doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+            const patients = JSON.parse(localStorage.getItem('patients') || '[]');
+            
+            let message = `Registered Records:\n`;
+            message += `📋 Doctors: ${doctors.length}\n`;
+            message += `👥 Patients: ${patients.length}\n\n`;
+            
+            if (doctors.length > 0) {
+                message += `Recent Doctors:\n`;
+                doctors.slice(0, 3).forEach(doctor => {
+                    message += `• Dr. ${doctor.fullName || doctor.name} - ${doctor.specialization}\n`;
+                });
+            }
+            
+            if (patients.length > 0) {
+                message += `\nRecent Patients:\n`;
+                patients.slice(0, 3).forEach(patient => {
+                    message += `• ${patient.fullName || patient.name} - ${patient.age || 'Age unknown'}\n`;
+                });
+            }
+            
+            if (doctors.length === 0 && patients.length === 0) {
+                message += 'No registered records found. Please register first.';
+            }
+            
+            alert(message);
+        }
+
+        // Show appointments
+        function showAppointments() {
+            const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            
+            let message = `Appointments:\n`;
+            message += `📅 Total: ${appointments.length}\n\n`;
+            
+            if (appointments.length > 0) {
+                appointments.slice(0, 5).forEach(appointment => {
+                    message += `• ${appointment.patient} with ${appointment.doctor}\n`;
+                    message += `  ${appointment.datetime} - ${appointment.status}\n\n`;
+                });
+            } else {
+                message += 'No appointments found.';
+            }
+            
+            alert(message);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('userType');
+            loadUserProfile();
+            showMessage('Logged out successfully', 'success');
+        }
+
+        // Show message function
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} position-fixed`;
+            messageDiv.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 300px;';
+            messageDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Initialize profile on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            
+            // Update profile every 5 seconds to check for login changes
+            setInterval(loadUserProfile, 5000);
+        });
+
         // Chat functionality
         let chatOpen = false;
         let messageCount = 3;
@@ -1346,6 +1764,9 @@
 
         // Initialize chat and chatbot
         document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            checkLoginStatus();
+            
             // Set initial chat state to minimized
             const chatWidget = document.getElementById('chatWidget');
             chatWidget.classList.add('minimized');
@@ -1358,6 +1779,28 @@
             makeDraggable('chatWidget');
             makeDraggable('healthChatbot');
         });
+
+        // User Session Management
+        function checkLoginStatus() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const user = JSON.parse(loggedInUser);
+                showUserInfo(user.fullName, user.type);
+            }
+        }
+
+        function showUserInfo(name, userType) {
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            
+            userName.textContent = `${name} (${userType})`;
+            userInfo.classList.add('show');
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
 
         // Make element draggable
         function makeDraggable(elementId) {
@@ -1493,759 +1936,6 @@
             const loginMessage = document.getElementById('loginMessage');
             loginMessage.style.display = 'none';
         }
-    </script>
-
-    <!-- AI Health Assistant Chatbot -->
-    <div id="healthChatbot" class="health-chatbot">
-        <div class="chatbot-header" onclick="toggleHealthChatbot()">
-            <i class="fas fa-robot"></i>
-            <span>AI Health Assistant</span>
-            <span class="chatbot-badge" id="chatbotBadge">Online</span>
-        </div>
-        <div class="chatbot-body" id="chatbotBody">
-            <div class="chatbot-messages" id="chatbotMessages">
-                <div class="message bot-message">
-                    <div class="message-avatar">🤖 AI Assistant</div>
-                    <div class="message-content">
-                        Hello! I'm your AI Health Assistant. I can help you with:
-                        <br><br>
-                        📅 <strong>Book Appointments</strong><br>
-                        💊 <strong>Medicine Recommendations</strong><br>
-                        🩺 <strong>Symptom Analysis</strong><br>
-                        💡 <strong>Health Advice</strong><br>
-                        📋 <strong>Prescription Help</strong><br><br>
-                        How can I help you today?
-                    </div>
-                    <div class="message-time">Just now</div>
-                </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="quick-action-btn" onclick="quickAction('appointment')">
-                    <i class="fas fa-calendar-check"></i> Book Appointment
-                </button>
-                <button class="quick-action-btn" onclick="quickAction('symptoms')">
-                    <i class="fas fa-stethoscope"></i> Check Symptoms
-                </button>
-                <button class="quick-action-btn" onclick="quickAction('medicine')">
-                    <i class="fas fa-pills"></i> Medicine Info
-                </button>
-                <button class="quick-action-btn" onclick="quickAction('advice')">
-                    <i class="fas fa-heartbeat"></i> Health Advice
-                </button>
-            </div>
-            
-            <div class="chatbot-input">
-                <input type="text" id="chatbotInput" placeholder="Type your health question..." onkeypress="handleChatbotKeyPress(event)">
-                <button onclick="sendChatbotMessage()"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* Health Chatbot Styles */
-        .health-chatbot {
-            position: fixed;
-            bottom: 540px;
-            right: 20px;
-            width: 380px;
-            height: 450px;
-            background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            border-radius: 15px;
-            z-index: 9998;
-            font-family: 'Rajdhani', sans-serif;
-            transition: all 0.3s ease;
-            resize: both;
-            overflow: auto;
-            min-width: 300px;
-            min-height: 350px;
-            max-width: 600px;
-            max-height: 700px;
-        }
-
-        .health-chatbot.dragging {
-            opacity: 0.9;
-            cursor: move;
-        }
-
-        .chatbot-header {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px;
-            border-radius: 13px 13px 0 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .chatbot-badge {
-            background: #4ade80;
-            color: white;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .chatbot-body {
-            height: calc(100% - 60px);
-            display: none;
-            flex-direction: column;
-        }
-
-        .chatbot-body.active {
-            display: flex;
-        }
-
-        .chatbot-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 250px;
-        }
-
-        .bot-message {
-            align-self: flex-start;
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 15px;
-            padding: 12px;
-            max-width: 90%;
-        }
-
-        .user-message {
-            align-self: flex-end;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 15px;
-            padding: 12px;
-            max-width: 90%;
-        }
-
-        .message-avatar {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .message-content {
-            color: var(--text-primary);
-            line-height: 1.4;
-            font-size: 0.9rem;
-        }
-
-        .message-time {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-
-        .quick-actions {
-            padding: 10px;
-            border-top: 1px solid rgba(102, 126, 234, 0.3);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .quick-action-btn {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 8px;
-            padding: 8px;
-            color: var(--text-primary);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .quick-action-btn:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .quick-action-btn i {
-            display: block;
-            margin-bottom: 3px;
-            color: #667eea;
-        }
-
-        .chatbot-input {
-            padding: 15px;
-            border-top: 1px solid rgba(102, 126, 234, 0.3);
-            display: flex;
-            gap: 10px;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            background: rgba(10, 10, 10, 0.5);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 25px;
-            padding: 10px 15px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .chatbot-input input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-        }
-
-        .chatbot-input button {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chatbot-input button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
-        }
-
-        .health-chatbot.minimized {
-            height: 60px;
-        }
-
-        .health-chatbot.minimized .chatbot-body {
-            display: none;
-        }
-
-        /* Responsive for chatbot */
-        @media (max-width: 768px) {
-            .health-chatbot {
-                width: 90%;
-                right: 5%;
-                bottom: 80px;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-
-    <script>
-        // Health Chatbot functionality
-        let healthChatbotOpen = false;
-
-        function toggleHealthChatbot() {
-            const chatbotBody = document.getElementById('chatbotBody');
-            const chatbot = document.getElementById('healthChatbot');
-            
-            healthChatbotOpen = !healthChatbotOpen;
-            
-            if (healthChatbotOpen) {
-                chatbotBody.classList.add('active');
-                chatbot.classList.remove('minimized');
-            } else {
-                chatbotBody.classList.remove('active');
-                chatbot.classList.add('minimized');
-            }
-        }
-
-        function quickAction(action) {
-            const chatbotMessages = document.getElementById('chatbotMessages');
-            const time = new Date().toLocaleTimeString('en-IN', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: true 
-            });
-            
-            let response = '';
-            
-            switch(action) {
-                case 'appointment':
-                    response = `I can help you book an appointment! Please provide:
-                    <br><br>
-                    📅 Preferred date and time<br>
-                    👨‍⚕️ Preferred doctor/specialty<br>
-                    📝 Reason for visit<br>
-                    📱 Your contact number<br><br>
-                    For example: "I want to book an appointment with Dr. Sharma tomorrow at 10 AM for a routine checkup"`;
-                    break;
-                    
-                case 'symptoms':
-                    response = `I can help analyze your symptoms. Please describe:
-                    <br><br>
-                    🩺 What symptoms are you experiencing?<br>
-                    ⏰ How long have you had them?<br>
-                    🌡️ Do you have fever? If yes, temperature?<br>
-                    💊 Any medications you're taking?<br>
-                    🏥 Any existing medical conditions?<br><br>
-                    ⚠️ <strong>Note:</strong> This is for preliminary guidance only. Please consult a doctor for proper diagnosis.`;
-                    break;
-                    
-                case 'medicine':
-                    response = `I can help with medicine information! Tell me:
-                    <br><br>
-                    💊 Medicine name you're asking about<br>
-                    🤔 What you want to know (usage, side effects, alternatives)<br>
-                    📋 Your current symptoms or condition<br><br>
-                    Common medicines I can help with:<br>
-                    • Pain relief (Paracetamol, Ibuprofen)<br>
-                    • Cold & flu (Cetrizine, Azithromycin)<br>
-                    • Stomach issues (Omeprazole, Pantoprazole)<br>
-                    • Vitamins & supplements`;
-                    break;
-                    
-                case 'advice':
-                    response = `Here's some general health advice:
-                    <br><br>
-                    🥗 <strong>Diet:</strong> Eat balanced meals with fruits and vegetables<br>
-                    💧 <strong>Hydration:</strong> Drink 8-10 glasses of water daily<br>
-                    🏃 <strong>Exercise:</strong> 30 minutes of moderate activity daily<br>
-                    😴 <strong>Sleep:</strong> 7-8 hours of quality sleep<br>
-                    🧘 <strong>Stress:</strong> Practice meditation or deep breathing<br>
-                    🚭 <strong>Avoid:</strong> Smoking, excessive alcohol, processed foods<br><br>
-                    Would you like specific advice for any health concern?`;
-                    break;
-            }
-            
-            // Add bot response
-            const botMessage = document.createElement('div');
-            botMessage.className = 'message bot-message';
-            botMessage.innerHTML = `
-                <div class="message-avatar">🤖 AI Assistant</div>
-                <div class="message-content">${response}</div>
-                <div class="message-time">${time}</div>
-            `;
-            chatbotMessages.appendChild(botMessage);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        }
-
-        function sendChatbotMessage() {
-            const input = document.getElementById('chatbotInput');
-            const message = input.value.trim();
-            
-            if (message) {
-                const chatbotMessages = document.getElementById('chatbotMessages');
-                const time = new Date().toLocaleTimeString('en-IN', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
-                
-                // Add user message
-                const userMessage = document.createElement('div');
-                userMessage.className = 'message user-message';
-                userMessage.innerHTML = `
-                    <div class="message-content">${message}</div>
-                    <div class="message-time">${time}</div>
-                `;
-                chatbotMessages.appendChild(userMessage);
-                
-                // Clear input
-                input.value = '';
-                
-                // Scroll to bottom
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                
-                // Generate AI response
-                setTimeout(() => {
-                    const aiResponse = generateAIResponse(message);
-                    const botMessage = document.createElement('div');
-                    botMessage.className = 'message bot-message';
-                    botMessage.innerHTML = `
-                        <div class="message-avatar">🤖 AI Assistant</div>
-                        <div class="message-content">${aiResponse}</div>
-                        <div class="message-time">${time}</div>
-                    `;
-                    chatbotMessages.appendChild(botMessage);
-                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                }, 1500);
-            }
-        }
-
-        function generateAIResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-            
-            // Use web search for dynamic responses
-            searchWebForHealthInfo(userMessage).then(response => {
-                const chatbotMessages = document.getElementById('chatbotMessages');
-                const time = new Date().toLocaleTimeString('en-IN', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
-                
-                const botMessage = document.createElement('div');
-                botMessage.className = 'message bot-message';
-                botMessage.innerHTML = `
-                    <div class="message-avatar">🤖 AI Assistant</div>
-                    <div class="message-content">${response}</div>
-                    <div class="message-time">${time}</div>
-                `;
-                chatbotMessages.appendChild(botMessage);
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }).catch(() => {
-                // Fallback to static responses if search fails
-                fallbackResponse(lowerMessage);
-            });
-            
-            // Show typing indicator immediately
-            return "🔍 Searching for the latest health information...";
-        }
-
-        async function searchWebForHealthInfo(query) {
-            // Simulate web search with dynamic responses
-            const searchQueries = {
-                'fever': 'latest fever treatment guidelines 2024',
-                'headache': 'new headache treatments 2024 medical',
-                'covid': 'covid 2024 latest symptoms treatment',
-                'diabetes': 'diabetes management 2024 new guidelines',
-                'blood pressure': 'hypertension treatment 2024 latest',
-                'medicine': 'new medicines approved 2024 fda',
-                'appointment': 'online doctor appointment booking 2024',
-                'symptoms': 'symptom checker ai medical 2024'
-            };
-            
-            // Find relevant search query
-            let searchQuery = query;
-            for (let key in searchQueries) {
-                if (query.toLowerCase().includes(key)) {
-                    searchQuery = searchQueries[key];
-                    break;
-                }
-            }
-            
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Generate dynamic response based on current medical knowledge
-            return generateDynamicResponse(query.toLowerCase());
-        }
-
-        function generateDynamicResponse(query) {
-            const currentYear = new Date().getFullYear();
-            const currentDate = new Date().toLocaleDateString();
-            
-            // Dynamic responses with latest information
-            if (query.includes('fever') || query.includes('temperature')) {
-                return `🔍 **Latest Fever Management (${currentDate})** 🌡️
-                
-                <br><br>
-                **Recent Medical Guidelines (${currentYear}):**
-                • Normal temperature: 97.5°F to 99.5°F (36.4°C to 37.5°C)
-                • Low-grade fever: 99.5°F to 100.9°F (37.5°C to 38.3°C)
-                • High fever: 103°F (39.4°C) or higher
-                
-                <br><br>
-                **🆕 New Treatments (${currentYear}):**
-                • Acetaminophen (Tylenol) - First line treatment
-                • Ibuprofen - Alternative for adults
-                • Cool compresses - Non-medical relief
-                
-                <br><br>
-                **⚠️ When to Seek Immediate Care:**
-                • Fever > 103°F (39.4°C) in adults
-                • Fever lasting more than 3 days
-                • Fever with severe headache, stiff neck, confusion
-                • Fever in infants under 3 months
-                
-                <br><br>
-                **💊 Latest Recommendations:**
-                • Stay hydrated with electrolyte drinks
-                • Rest in a cool, comfortable environment
-                • Monitor symptoms every 4 hours
-                • Use digital thermometers for accuracy
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('headache') || query.includes('migraine')) {
-                return `🔍 **Latest Headache Treatments (${currentDate})** 🤕
-                
-                <br><br>
-                **New Classification (${currentYear}):**
-                • Tension headaches: Most common (90% of cases)
-                • Migraines: Moderate to severe, often with nausea
-                • Cluster headaches: Severe, around one eye
-                • Sinus headaches: With sinus infection symptoms
-                
-                <br><br>
-                **🆕 Breakthrough Treatments (${currentYear}):**
-                • CGRP inhibitors for chronic migraines
-                • New triptans with fewer side effects
-                • Neuromodulation devices
-                • Botox for chronic migraine prevention
-                
-                <br><br>
-                **💊 Latest Medications:**
-                • Over-the-counter: Ibuprofen, Naproxen, Acetaminophen
-                • Prescription: Sumatriptan, Rizatriptan, Zolmitriptan
-                • Preventive: Propranolol, Amitriptyline, Topiramate
-                
-                <br><br>
-                **🏥 When to Seek Emergency Care:**
-                • "Worst headache of your life"
-                • Headache with fever, stiff neck, confusion
-                • Headache after head injury
-                • Sudden, severe headache like thunderclap
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('covid') || query.includes('coronavirus')) {
-                return `🔍 **Latest COVID-19 Information (${currentDate})** 😷
-                
-                <br><br>
-                **Current Variants (${currentYear}):**
-                • JN.1 (Dominant variant)
-                • Pirola (BA.2.86) sublineages
-                • XBB recombinant variants
-                
-                <br><br>
-                **🆕 Updated Symptoms (${currentYear}):**
-                • Sore throat, cough, fatigue
-                • Headache, muscle aches
-                • Loss of taste/smell (less common)
-                • Runny nose, congestion
-                
-                <br><br>
-                **Latest Treatments:**
-                • Paxlovid (oral antiviral)
-                • Remdesivir (IV antiviral)
-                • Updated vaccines targeting current variants
-                • Supportive care: Rest, hydration, fever reducers
-                
-                <br><br>
-                **Prevention Guidelines:**
-                • Updated vaccines recommended annually
-                • High-quality masks (N95/KN95) in crowded areas
-                • Hand hygiene and ventilation
-                • Testing when symptoms develop
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('diabetes') || query.includes('blood sugar')) {
-                return `🔍 **Latest Diabetes Management (${currentDate})** 🩸
-                
-                <br><br>
-                **New Guidelines (${currentYear}):**
-                • Normal fasting glucose: 70-99 mg/dL
-                • Prediabetes: 100-125 mg/dL
-                • Diabetes: 126 mg/dL or higher
-                • A1C target: Below 7% for most adults
-                
-                <br><br>
-                **🆕 Breakthrough Medications (${currentYear}):**
-                • SGLT2 inhibitors (Farxiga, Jardiance)
-                • GLP-1 receptor agonists (Ozempic, Trulicity)
-                • Dual GIP/GLP-1 agonists (Mounjaro)
-                • Smart insulin pens and pumps
-                
-                <br><br>
-                **Latest Monitoring Technology:**
-                • Continuous Glucose Monitors (CGM)
-                • Smart insulin delivery systems
-                • Mobile apps for tracking
-                • AI-powered glucose prediction
-                
-                <br><br>
-                **Dietary Updates (${currentYear}):**
-                • Low-carbohydrate diets show promise
-                • Mediterranean diet recommended
-                • Time-restricted eating benefits
-                • Plant-based proteins emphasized
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('medicine') || query.includes('drug') || query.includes('pharmacy')) {
-                return `🔍 **Latest Medicine Information (${currentDate})** 💊
-                
-                <br><br>
-                **🆕 New FDA Approvals (${currentYear}):**
-                • Alzheimer's: Leqembi (donanemab)
-                • Weight loss: Wegovy, Zepbound
-                • Diabetes: Mounjaro (tirzepatide)
-                • Migraine: Qulipta, Nurtec ODT
-                
-                <br><br>
-                **Updated Safety Warnings:**
-                • NSAIDs: Increased cardiovascular risk
-                • Antibiotics: Growing resistance concerns
-                • Opioids: Strict prescribing guidelines
-                • Herbal supplements: Drug interactions
-                
-                <br><br>
-                **Telemedicine Pharmacy Services:**
-                • Online prescription fulfillment
-                • Home delivery services
-                • Digital pill reminders
-                • Virtual pharmacist consultations
-                
-                <br><br>
-                **Popular Medications (${currentYear}):**
-                • Pain: Acetaminophen, Ibuprofen, Naproxen
-                • Allergies: Cetirizine, Fexofenadine, Loratadine
-                • Blood Pressure: Lisinopril, Amlodipine, Metoprolol
-                • Cholesterol: Atorvastatin, Rosuvastatin
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('appointment') || query.includes('booking') || query.includes('schedule')) {
-                return `🔍 **Latest Appointment Booking (${currentDate})** 📅
-                
-                <br><br>
-                **🆕 Telehealth Revolution (${currentYear}):**
-                • Video consultations now standard
-                • AI-powered symptom screening
-                • Electronic prescriptions sent directly
-                • Follow-up care via secure messaging
-                
-                <br><br>
-                **Current Wait Times (${currentDate}):**
-                • Primary care: 2-5 days
-                • Specialists: 1-3 weeks
-                • Urgent care: Same day
-                • Emergency: Immediate
-                
-                <br><br>
-                **New Booking Features:**
-                • Real-time availability calendars
-                • Automated reminders via SMS/email
-                • Online pre-visit questionnaires
-                • Insurance verification before visit
-                
-                <br><br>
-                **Available Specialties:**
-                • Primary Care, Cardiology, Neurology
-                • Pediatrics, Orthopedics, Dermatology
-                • Mental Health, Women's Health
-                • Preventive Care, Vaccinations
-                
-                <br><br>
-                **Booking Options:**
-                📞 Call: +91-9876543210<br>
-                🌐 Online: Available 24/7<br>
-                📱 Mobile App: Download now<br>
-                💬 WhatsApp: +91-9876543210
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else if (query.includes('symptoms') || query.includes('check') || query.includes('diagnosis')) {
-                return `🔍 **AI Symptom Checker (${currentDate})** 🩺
-                
-                <br><br>
-                **🆕 Advanced AI Analysis (${currentYear}):**
-                • Machine learning algorithms trained on millions of cases
-                • Symptom pattern recognition
-                • Risk assessment scoring
-                • Differential diagnosis suggestions
-                
-                <br><br>
-                **Common Symptom Patterns:**
-                • Fever + Cough + Fatigue: Possible viral infection
-                • Headache + Nausea + Light sensitivity: Migraine
-                • Chest pain + Shortness of breath: Cardiac evaluation needed
-                • Joint pain + Swelling + Stiffness: Arthritis
-                
-                <br><br>
-                **Red Flag Symptoms:**
-                🚨 Seek immediate care for:
-                • Difficulty breathing
-                • Chest pain/pressure
-                • Severe headache with fever
-                • Confusion or disorientation
-                • Uncontrolled bleeding
-                
-                <br><br>
-                **Digital Health Tools:**
-                • Smart thermometers
-                • Blood pressure monitors
-                • Glucose meters
-                • Pulse oximeters
-                • ECG monitors
-                
-                <br><br>
-                ⚠️ **Disclaimer:** This AI tool provides guidance only. Always consult a healthcare professional for proper diagnosis and treatment.
-                
-                <br><br>
-                📊 *Information updated: ${currentDate}*`;
-            }
-            
-            else {
-                return `🔍 **AI Health Assistant (${currentDate})** 🤖
-                
-                <br><br>
-                I can search for the latest health information on:
-                
-                <br><br>
-                🩺 **Medical Conditions & Symptoms**
-                • Latest treatment guidelines
-                • New research findings
-                • Current best practices
-                
-                <br><br>
-                💊 **Medications & Treatments**
-                • New drug approvals
-                • Updated safety information
-                • Alternative therapies
-                
-                <br><br>
-                📅 **Healthcare Services**
-                • Appointment booking
-                • Telehealth options
-                • Specialist availability
-                
-                <br><br>
-                💡 **Health & Wellness**
-                • Latest nutrition guidelines
-                • Exercise recommendations
-                • Mental health resources
-                
-                <br><br>
-                Please ask me about any health topic, and I'll search for the most current information available!
-                
-                <br><br>
-                📊 *AI-powered search engine active - ${currentDate}*`;
-            }
-        }
-
-        function fallbackResponse(lowerMessage) {
-            // Fallback to basic responses if search fails
-            if (lowerMessage.includes('fever')) {
-                return "I'm having trouble accessing the latest information. For fever, please consult a healthcare provider or visit a nearby clinic.";
-            }
-            return "I'm experiencing technical difficulties. Please try again or contact our support team.";
-        }
-
-        function handleChatbotKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendChatbotMessage();
-            }
-        }
-
-        // Initialize chatbot (already initialized above)
-        // makeDraggable('healthChatbot') is called in the main initialization
     </script>
 </body>
 </html>

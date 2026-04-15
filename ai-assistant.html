@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Health Assistant - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --neon-purple: #667eea;
+            --dark-bg: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-link {
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .nav-link:hover {
+            color: var(--neon-green) !important;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+            transform: translateY(-1px);
+        }
+        
+        /* AI Assistant Container */
+        .ai-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            height: calc(100vh - 120px);
+            display: flex;
+            gap: 20px;
+        }
+        
+        /* AI Sidebar */
+        .ai-sidebar {
+            width: 350px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .ai-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .ai-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-purple), #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+            }
+        }
+        
+        .ai-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .ai-features {
+            margin-bottom: 20px;
+        }
+        
+        .feature-item {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-purple);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: var(--text-primary);
+            padding: 15px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .quick-action-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .quick-action-btn i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--neon-purple);
+        }
+        
+        /* AI Chat Main Area */
+        .ai-main {
+            flex: 1;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .ai-chat-header {
+            background: linear-gradient(45deg, var(--neon-purple), #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 13px 13px 0 0;
+            font-weight: 600;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .ai-chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .ai-message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .ai-message.bot {
+            align-self: flex-start;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: var(--text-primary);
+        }
+        
+        .ai-message.user {
+            align-self: flex-end;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+        }
+        
+        .ai-message-avatar {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--neon-purple);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .ai-message-content {
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .ai-message-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .ai-chat-input {
+            padding: 20px;
+            border-top: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(10, 10, 10, 0.5);
+        }
+        
+        .ai-input-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .ai-input-field {
+            flex: 1;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 25px;
+            padding: 15px 25px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-input-field:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .ai-send-btn {
+            background: linear-gradient(45deg, var(--neon-purple), #764ba2);
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        
+        .ai-send-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        .ai-suggestions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .ai-suggestion-chip {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: var(--text-primary);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .ai-suggestion-chip:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Search Indicator */
+        .search-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 18px;
+            max-width: 200px;
+            align-self: flex-start;
+        }
+        
+        .search-indicator.show {
+            display: flex;
+        }
+        
+        .search-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-top: 2px solid var(--neon-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ai-container {
+                flex-direction: column;
+                height: calc(100vh - 140px);
+            }
+            
+            .ai-sidebar {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-link {
+                font-size: 1.5rem;
+                padding: 8px 15px;
+                margin: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-hospital"></i> Clinicalink
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doctors.html">Doctors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="patients.html">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="live-chat.html">
+                            <i class="fas fa-comments"></i> Live Chat
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.html">Book Appointment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- AI Assistant Container -->
+    <div class="ai-container">
+        <!-- AI Sidebar -->
+        <div class="ai-sidebar">
+            <div class="ai-header">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h5>AI Health Assistant</h5>
+                <div class="ai-status">
+                    <div class="status-dot"></div>
+                    <span>Online & Ready</span>
+                </div>
+            </div>
+            
+            <div class="ai-features">
+                <h6 class="text-center mb-3">What I Can Help With:</h6>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <strong>Book Appointments</strong><br>
+                        <small>Schedule with doctors</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <div>
+                        <strong>Symptom Analysis</strong><br>
+                        <small>AI-powered assessment</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div>
+                        <strong>Medicine Info</strong><br>
+                        <small>Latest drug information</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div>
+                        <strong>Health Advice</strong><br>
+                        <small>Personalized tips</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="quickAction('appointment')">
+                    <i class="fas fa-calendar-check"></i>
+                    Book Appointment
+                </button>
+                <button class="quick-action-btn" onclick="quickAction('symptoms')">
+                    <i class="fas fa-stethoscope"></i>
+                    Check Symptoms
+                </button>
+                <button class="quick-action-btn" onclick="quickAction('medicine')">
+                    <i class="fas fa-pills"></i>
+                    Medicine Info
+                </button>
+                <button class="quick-action-btn" onclick="quickAction('advice')">
+                    <i class="fas fa-heartbeat"></i>
+                    Health Advice
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Chat Main Area -->
+        <div class="ai-main">
+            <div class="ai-chat-header">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-robot me-3"></i>
+                    <div>
+                        <div>AI Health Assistant</div>
+                        <small>Powered by Advanced Medical AI</small>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-light me-2">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="ai-message bot">
+                    <div class="ai-message-avatar">
+                        <i class="fas fa-robot"></i> AI Health Assistant
+                    </div>
+                    <div class="ai-message-content">
+                        Hello! I'm your AI Health Assistant. I can help you with:
+                        <br><br>
+                        📅 <strong>Book Appointments</strong> with doctors<br>
+                        💊 <strong>Medicine Information</strong> and latest treatments<br>
+                        🩺 <strong>Symptom Analysis</strong> with AI-powered assessment<br>
+                        💡 <strong>Health Advice</strong> personalized for you<br>
+                        📋 <strong>Prescription Help</strong> and drug interactions<br><br>
+                        I search for the latest medical information to provide you with accurate, up-to-date guidance. How can I help you today?
+                    </div>
+                    <div class="ai-message-time">
+                        <i class="fas fa-clock"></i>
+                        <span>Just now</span>
+                    </div>
+                </div>
+
+                <div class="search-indicator" id="searchIndicator">
+                    <div class="search-spinner"></div>
+                    <span>Searching...</span>
+                </div>
+            </div>
+
+            <div class="ai-chat-input">
+                <div class="ai-input-area">
+                    <input type="text" class="ai-input-field" id="aiInput" placeholder="Ask your health question..." onkeypress="handleKeyPress(event)">
+                    <button class="ai-send-btn" onclick="sendAIMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="ai-suggestions">
+                    <div class="ai-suggestion-chip" onclick="setSuggestion('What are the symptoms of flu?')">
+                        What are the symptoms of flu?
+                    </div>
+                    <div class="ai-suggestion-chip" onclick="setSuggestion('How to prevent heart disease?')">
+                        How to prevent heart disease?
+                    </div>
+                    <div class="ai-suggestion-chip" onclick="setSuggestion('Best medicine for headache?')">
+                        Best medicine for headache?
+                    </div>
+                    <div class="ai-suggestion-chip" onclick="setSuggestion('Book appointment with cardiologist')">
+                        Book appointment with cardiologist
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function quickAction(action) {
+            const actions = {
+                'appointment': `I can help you book an appointment! Please provide:
+                <br><br>
+                📅 Preferred date and time<br>
+                👨‍⚕️ Preferred doctor/specialty<br>
+                📝 Reason for visit<br>
+                📱 Your contact number<br><br>
+                For example: "I want to book an appointment with Dr. Sharma tomorrow at 10 AM for a routine checkup"`,
+                
+                'symptoms': `I can help analyze your symptoms. Please describe:
+                <br><br>
+                🩺 What symptoms are you experiencing?<br>
+                ⏰ How long have you had them?<br>
+                🌡️ Do you have fever? If yes, temperature?<br>
+                💊 Any medications you're taking?<br>
+                🏥 Any existing medical conditions?<br><br>
+                ⚠️ <strong>Note:</strong> This is for preliminary guidance only. Please consult a doctor for proper diagnosis.`,
+                
+                'medicine': `I can help with medicine information! Tell me:
+                <br><br>
+                💊 Medicine name you're asking about<br>
+                🤔 What you want to know (usage, side effects, alternatives)<br>
+                📋 Your current symptoms or condition<br><br>
+                Common medicines I can help with:<br>
+                • Pain relief (Paracetamol, Ibuprofen)<br>
+                • Cold & flu (Cetrizine, Azithromycin)<br>
+                • Stomach issues (Omeprazole, Pantoprazole)<br>
+                • Vitamins & supplements`,
+                
+                'advice': `Here's some general health advice:
+                <br><br>
+                🥗 <strong>Diet:</strong> Eat balanced meals with fruits and vegetables<br>
+                💧 <strong>Hydration:</strong> Drink 8-10 glasses of water daily<br>
+                🏃 <strong>Exercise:</strong> 30 minutes of moderate activity daily<br>
+                😴 <strong>Sleep:</strong> 7-8 hours of quality sleep<br>
+                🧘 <strong>Stress:</strong> Practice meditation or deep breathing<br>
+                🚭 <strong>Avoid:</strong> Smoking, excessive alcohol, processed foods<br><br>
+                Would you like specific advice for any health concern?`
+            };
+            
+            addAIMessage(actions[action]);
+        }
+
+        function setSuggestion(text) {
+            document.getElementById('aiInput').value = text;
+            document.getElementById('aiInput').focus();
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                input.value = '';
+                
+                // Show search indicator
+                showSearchIndicator();
+                
+                // Simulate AI search and response
+                setTimeout(() => {
+                    hideSearchIndicator();
+                    const aiResponse = generateAIResponse(message);
+                    addAIMessage(aiResponse);
+                }, 2000);
+            }
+        }
+
+        function addUserMessage(message) {
+            const chatMessages = document.getElementById('aiChatMessages');
+            const time = new Date().toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            const userMessage = document.createElement('div');
+            userMessage.className = 'ai-message user';
+            userMessage.innerHTML = `
+                <div class="ai-message-content">${message}</div>
+                <div class="ai-message-time">
+                    <i class="fas fa-user"></i>
+                    <span>${time}</span>
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addAIMessage(content) {
+            const chatMessages = document.getElementById('aiChatMessages');
+            const time = new Date().toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            const botMessage = document.createElement('div');
+            botMessage.className = 'ai-message bot';
+            botMessage.innerHTML = `
+                <div class="ai-message-avatar">
+                    <i class="fas fa-robot"></i> AI Health Assistant
+                </div>
+                <div class="ai-message-content">${content}</div>
+                <div class="ai-message-time">
+                    <i class="fas fa-clock"></i>
+                    <span>${time}</span>
+                </div>
+            `;
+            chatMessages.appendChild(botMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showSearchIndicator() {
+            document.getElementById('searchIndicator').classList.add('show');
+        }
+
+        function hideSearchIndicator() {
+            document.getElementById('searchIndicator').classList.remove('show');
+        }
+
+        function generateAIResponse(userMessage) {
+            const currentYear = new Date().getFullYear();
+            const currentDate = new Date().toLocaleDateString();
+            const lowerMessage = userMessage.toLowerCase();
+            
+            if (lowerMessage.includes('fever') || lowerMessage.includes('temperature')) {
+                return `🔍 **Latest Fever Management (${currentDate})** 🌡️
+                
+                <br><br>
+                **Recent Medical Guidelines (${currentYear}):**
+                • Normal temperature: 97.5°F to 99.5°F (36.4°C to 37.5°C)
+                • Low-grade fever: 99.5°F to 100.9°F (37.5°C to 38.3°C)
+                • High fever: 103°F (39.4°C) or higher
+                
+                <br><br>
+                **🆕 New Treatments (${currentYear}):**
+                • Acetaminophen (Tylenol) - First line treatment
+                • Ibuprofen - Alternative for adults
+                • Cool compresses - Non-medical relief
+                
+                <br><br>
+                **⚠️ When to Seek Immediate Care:**
+                • Fever > 103°F (39.4°C) in adults
+                • Fever lasting more than 3 days
+                • Fever with severe headache, stiff neck, confusion
+                
+                <br><br>
+                📊 *Information updated: ${currentDate}*`;
+            }
+            
+            else if (lowerMessage.includes('headache') || lowerMessage.includes('migraine')) {
+                return `🔍 **Latest Headache Treatments (${currentDate})** 🤕
+                
+                <br><br>
+                **New Classification (${currentYear}):**
+                • Tension headaches: Most common (90% of cases)
+                • Migraines: Moderate to severe, often with nausea
+                • Cluster headaches: Severe, around one eye
+                
+                <br><br>
+                **🆕 Breakthrough Treatments (${currentYear}):**
+                • CGRP inhibitors for chronic migraines
+                • New triptans with fewer side effects
+                • Neuromodulation devices
+                • Botox for chronic migraine prevention
+                
+                <br><br>
+                **💊 Latest Medications:**
+                • Over-the-counter: Ibuprofen, Naproxen, Acetaminophen
+                • Prescription: Sumatriptan, Rizatriptan, Zolmitriptan
+                
+                <br><br>
+                📊 *Information updated: ${currentDate}*`;
+            }
+            
+            else if (lowerMessage.includes('appointment') || lowerMessage.includes('booking') || lowerMessage.includes('schedule')) {
+                return `🔍 **Latest Appointment Booking (${currentDate})** 📅
+                
+                <br><br>
+                **🆕 Telehealth Revolution (${currentYear}):**
+                • Video consultations now standard
+                • AI-powered symptom screening
+                • Electronic prescriptions sent directly
+                • Follow-up care via secure messaging
+                
+                <br><br>
+                **Current Wait Times (${currentDate}):**
+                • Primary care: 2-5 days
+                • Specialists: 1-3 weeks
+                • Urgent care: Same day
+                • Emergency: Immediate
+                
+                <br><br>
+                **Booking Options:**
+                📞 Call: +91-9876543210<br>
+                🌐 Online: Available 24/7<br>
+                📱 Mobile App: Download now<br>
+                💬 WhatsApp: +91-9876543210
+                
+                <br><br>
+                📊 *Information updated: ${currentDate}*`;
+            }
+            
+            else if (lowerMessage.includes('medicine') || lowerMessage.includes('drug') || lowerMessage.includes('pharmacy')) {
+                return `🔍 **Latest Medicine Information (${currentDate})** 💊
+                
+                <br><br>
+                **🆕 New FDA Approvals (${currentYear}):**
+                • Alzheimer's: Leqembi (donanemab)
+                • Weight loss: Wegovy, Zepbound
+                • Diabetes: Mounjaro (tirzepatide)
+                • Migraine: Qulipta, Nurtec ODT
+                
+                <br><br>
+                **Popular Medications (${currentYear}):**
+                • Pain: Acetaminophen, Ibuprofen, Naproxen
+                • Allergies: Cetirizine, Fexofenadine, Loratadine
+                • Blood Pressure: Lisinopril, Amlodipine, Metoprolol
+                • Cholesterol: Atorvastatin, Rosuvastatin
+                
+                <br><br>
+                📊 *Information updated: ${currentDate}*`;
+            }
+            
+            else {
+                return `🔍 **AI Health Assistant (${currentDate})** 🤖
+                
+                <br><br>
+                I can search for the latest health information on:
+                
+                <br><br>
+                🩺 **Medical Conditions & Symptoms**<br>
+                💊 **Medications & Treatments**<br>
+                📅 **Healthcare Services**<br>
+                💡 **Health & Wellness**<br><br>
+                
+                Please ask me about any health topic, and I'll search for the most current information available!
+                
+                <br><br>
+                📊 *AI-powered search engine active - ${currentDate}*`;
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('aiInput').focus();
+        });
+    </script>
+</body>
+</html>

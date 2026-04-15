@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat - Clinicalink</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --dark-bg: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-link {
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .nav-link:hover {
+            color: var(--neon-green) !important;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+            transform: translateY(-1px);
+        }
+        
+        /* Chat Container */
+        .chat-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            height: calc(100vh - 120px);
+            display: flex;
+            gap: 20px;
+        }
+        
+        /* Chat Sidebar */
+        .chat-sidebar {
+            width: 300px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .doctor-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .doctor-item {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .doctor-item:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .doctor-item.active {
+            background: rgba(0, 255, 136, 0.3);
+            border-color: var(--neon-green);
+        }
+        
+        .doctor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: var(--dark-bg);
+        }
+        
+        .doctor-info {
+            flex: 1;
+        }
+        
+        .doctor-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .doctor-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-online {
+            background: #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+        }
+        
+        .status-busy {
+            background: #fbbf24;
+            box-shadow: 0 0 10px #fbbf24;
+        }
+        
+        .status-offline {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+        
+        /* Chat Main Area */
+        .chat-main {
+            flex: 1;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            color: var(--dark-bg);
+            padding: 20px;
+            border-radius: 13px 13px 0 0;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.doctor {
+            align-self: flex-start;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+        }
+        
+        .message.patient {
+            align-self: flex-end;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--text-primary);
+        }
+        
+        .message-info {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+            background: rgba(10, 10, 10, 0.5);
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .chat-input-field {
+            flex: 1;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input-field:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        .chat-send-btn {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: var(--dark-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .chat-action-btn {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .chat-action-btn:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 18px;
+            max-width: 100px;
+        }
+        
+        .typing-indicator.show {
+            display: flex;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: calc(100vh - 140px);
+            }
+            
+            .chat-sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .nav-link {
+                font-size: 1.5rem;
+                padding: 8px 15px;
+                margin: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-hospital"></i> Clinicalink
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doctors.html">Doctors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="patients.html">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-success px-3" href="messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.html">Book Appointment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <!-- Chat Sidebar -->
+        <div class="chat-sidebar">
+            <h5 class="mb-3 text-center">Available Doctors</h5>
+            <ul class="doctor-list">
+                <li class="doctor-item active" onclick="selectDoctor('dr-sharma')">
+                    <div class="d-flex align-items-center">
+                        <div class="doctor-avatar">RS</div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">Dr. Rajesh Sharma</div>
+                            <div class="doctor-status">
+                                <span class="status-indicator status-online"></span>
+                                Online - Cardiologist
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="doctor-item" onclick="selectDoctor('dr-patel')">
+                    <div class="d-flex align-items-center">
+                        <div class="doctor-avatar">PP</div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">Dr. Priya Patel</div>
+                            <div class="doctor-status">
+                                <span class="status-indicator status-busy"></span>
+                                Busy - Pediatrician
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="doctor-item" onclick="selectDoctor('dr-kumar')">
+                    <div class="d-flex align-items-center">
+                        <div class="doctor-avatar">AK</div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">Dr. Amit Kumar</div>
+                            <div class="doctor-status">
+                                <span class="status-indicator status-online"></span>
+                                Online - Orthopedic
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="doctor-item" onclick="selectDoctor('dr-reddy')">
+                    <div class="d-flex align-items-center">
+                        <div class="doctor-avatar">SR</div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">Dr. Sunita Reddy</div>
+                            <div class="doctor-status">
+                                <span class="status-indicator status-offline"></span>
+                                Offline - Gynecologist
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Chat Main Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="d-flex align-items-center">
+                    <div class="doctor-avatar me-3">RS</div>
+                    <div>
+                        <div id="currentDoctorName">Dr. Rajesh Sharma</div>
+                        <small id="currentDoctorStatus">Online - Cardiologist</small>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-light me-2">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-light me-2">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message doctor">
+                    <div>Hello! I'm Dr. Rajesh Sharma. How can I help you today?</div>
+                    <div class="message-info">
+                        <i class="fas fa-check-double"></i>
+                        <span>10:30 AM</span>
+                    </div>
+                </div>
+
+                <div class="message patient">
+                    <div>Hi Doctor, I've been experiencing chest pain recently.</div>
+                    <div class="message-info">
+                        <i class="fas fa-check"></i>
+                        <span>10:32 AM</span>
+                    </div>
+                </div>
+
+                <div class="message doctor">
+                    <div>I understand your concern. Can you tell me more about the chest pain? When did it start, and what does it feel like?</div>
+                    <div class="message-info">
+                        <i class="fas fa-check-double"></i>
+                        <span>10:33 AM</span>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input-field" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                    <button class="chat-send-btn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-action-btn" onclick="attachFile()">
+                        <i class="fas fa-paperclip"></i> Attach File
+                    </button>
+                    <button class="chat-action-btn" onclick="sendLocation()">
+                        <i class="fas fa-map-marker-alt"></i> Send Location
+                    </button>
+                    <button class="chat-action-btn" onclick="scheduleAppointment()">
+                        <i class="fas fa-calendar"></i> Schedule Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentDoctor = 'dr-sharma';
+        let messageCount = 0;
+
+        const doctors = {
+            'dr-sharma': {
+                name: 'Dr. Rajesh Sharma',
+                specialty: 'Cardiologist',
+                status: 'Online',
+                avatar: 'RS'
+            },
+            'dr-patel': {
+                name: 'Dr. Priya Patel',
+                specialty: 'Pediatrician',
+                status: 'Busy',
+                avatar: 'PP'
+            },
+            'dr-kumar': {
+                name: 'Dr. Amit Kumar',
+                specialty: 'Orthopedic',
+                status: 'Online',
+                avatar: 'AK'
+            },
+            'dr-reddy': {
+                name: 'Dr. Sunita Reddy',
+                specialty: 'Gynecologist',
+                status: 'Offline',
+                avatar: 'SR'
+            }
+        };
+
+        function selectDoctor(doctorId) {
+            currentDoctor = doctorId;
+            const doctor = doctors[doctorId];
+            
+            // Update active state
+            document.querySelectorAll('.doctor-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update chat header
+            document.getElementById('currentDoctorName').textContent = doctor.name;
+            document.getElementById('currentDoctorStatus').textContent = `${doctor.status} - ${doctor.specialty}`;
+            
+            // Clear chat and add welcome message
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="message doctor">
+                    <div>Hello! I'm ${doctor.name}. How can I help you today?</div>
+                    <div class="message-info">
+                        <i class="fas fa-check-double"></i>
+                        <span>${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                
+                // Add patient message
+                const patientMessage = document.createElement('div');
+                patientMessage.className = 'message patient';
+                patientMessage.innerHTML = `
+                    <div>${message}</div>
+                    <div class="message-info">
+                        <i class="fas fa-check"></i>
+                        <span>${time}</span>
+                    </div>
+                `;
+                chatMessages.appendChild(patientMessage);
+                
+                // Clear input
+                input.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // Simulate doctor response
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const doctorResponse = getDoctorResponse(message);
+                    const doctorMessage = document.createElement('div');
+                    doctorMessage.className = 'message doctor';
+                    doctorMessage.innerHTML = `
+                        <div>${doctorResponse}</div>
+                        <div class="message-info">
+                            <i class="fas fa-check-double"></i>
+                            <span>${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                    `;
+                    chatMessages.appendChild(doctorMessage);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 2000);
+            }
+        }
+
+        function getDoctorResponse(message) {
+            const responses = [
+                "Thank you for sharing that with me. Let me help you with this concern.",
+                "I understand. Can you provide more details about your symptoms?",
+                "Based on what you've described, I recommend scheduling an in-person consultation.",
+                "That's a valid concern. Let me address this step by step.",
+                "I'm here to help. Could you tell me how long you've been experiencing this?"
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('show');
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('show');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function attachFile() {
+            alert('File attachment feature coming soon!');
+        }
+
+        function sendLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    
+                    const locationMessage = document.createElement('div');
+                    locationMessage.className = 'message patient';
+                    locationMessage.innerHTML = `
+                        <div>
+                            <i class="fas fa-map-marker-alt"></i> Location shared
+                            <br><small>Lat: ${position.coords.latitude.toFixed(4)}, Lng: ${position.coords.longitude.toFixed(4)}</small>
+                        </div>
+                        <div class="message-info">
+                            <i class="fas fa-check"></i>
+                            <span>${time}</span>
+                        </div>
+                    `;
+                    chatMessages.appendChild(locationMessage);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+            }
+        }
+
+        function scheduleAppointment() {
+            window.location.href = 'book-appointment.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus on input
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>

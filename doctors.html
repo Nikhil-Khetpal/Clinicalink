@@ -18,60 +18,35 @@
             --neon-green: #00ff88;
             --neon-blue: #00d4ff;
             --dark-bg: #0a0a0a;
-            --card-bg: #1a1a2e;
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
-            --accent-purple: #9b59b6;
-            --accent-orange: #ff6b6b;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Rajdhani', sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             color: var(--text-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding-top: 80px;
         }
-
-        /* Animated Background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
-            animation: backgroundPulse 10s ease-in-out infinite;
-        }
-
-        @keyframes backgroundPulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-
+        
         /* Navigation */
         .navbar {
-            background: rgba(26, 26, 46, 0.95);
+            background: rgba(26, 26, 46, 0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 2px solid rgba(0, 255, 136, 0.3);
-            padding: 1rem 0;
             position: fixed;
-            width: 100%;
             top: 0;
+            width: 100%;
             z-index: 1000;
-            transition: all 0.3s ease;
         }
-
+        
         .navbar-brand {
             font-family: 'Orbitron', monospace;
             font-size: 1.8rem;
@@ -81,34 +56,45 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
+        
         .nav-link {
-            color: var(--text-secondary) !important;
-            font-weight: 600;
+            color: #ffffff !important;
+            font-weight: 700;
             font-size: 1.2rem;
             margin: 0 1rem;
             transition: all 0.3s ease;
             position: relative;
             text-decoration: none;
         }
-
+        
         .nav-link:hover {
             color: var(--neon-green) !important;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+            transform: translateY(-1px);
         }
-
-        /* Main Container */
-        .main-container {
-            margin-top: 6rem;
-            padding: 2rem;
+        
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 10px 20px;
+            z-index: 1001;
+            display: none;
         }
-
+        
+        .user-info.show {
+            display: block;
+        }
+        
         /* Page Header */
         .page-header {
             text-align: center;
-            margin-bottom: 3rem;
+            padding: 60px 0 40px;
         }
-
+        
         .page-title {
             font-family: 'Orbitron', monospace;
             font-size: 3rem;
@@ -117,57 +103,95 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
-
-        /* Filter Section */
-        .filter-section {
-            background: rgba(26, 26, 46, 0.95);
-            border: 2px solid rgba(0, 255, 136, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
         }
-
-        .filter-control {
-            background: rgba(10, 10, 10, 0.8);
+        
+        /* Search and Filter Section */
+        .search-section {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+        }
+        
+        .search-card {
+            background: rgba(26, 26, 46, 0.8);
             border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+        }
+        
+        .search-input {
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             border-radius: 10px;
+            padding: 15px;
             color: var(--text-primary);
-            padding: 0.75rem;
             font-size: 1rem;
             transition: all 0.3s ease;
+            width: 100%;
         }
-
-        .filter-control:focus {
+        
+        .search-input:focus {
+            background: rgba(10, 10, 10, 0.7);
             border-color: var(--neon-green);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-            background: rgba(10, 10, 10, 0.9);
-            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
             color: var(--text-primary);
+            outline: none;
         }
-
-        /* Doctor Cards Grid */
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .filter-tag {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .filter-tag:hover,
+        .filter-tag.active {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+        
+        /* Doctors Grid */
+        .doctors-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+        
         .doctors-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            gap: 30px;
         }
-
-        /* Doctor Card */
+        
         .doctor-card {
-            background: rgba(26, 26, 46, 0.95);
+            background: rgba(26, 26, 46, 0.8);
             border: 2px solid rgba(0, 255, 136, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: 15px;
+            padding: 25px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
         }
-
+        
         .doctor-card::before {
             content: '';
             position: absolute;
@@ -175,30 +199,28 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 136, 0.1), transparent);
-            animation: rotate 10s linear infinite;
-            z-index: -1;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        .doctor-card:hover::before {
+            opacity: 1;
         }
-
+        
         .doctor-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
             border-color: var(--neon-green);
-            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.3);
         }
-
-        /* Doctor Profile Header */
+        
         .doctor-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            position: relative;
+            gap: 20px;
+            margin-bottom: 20px;
         }
-
+        
         .doctor-avatar {
             width: 80px;
             height: 80px;
@@ -209,11 +231,10 @@
             justify-content: center;
             font-size: 2rem;
             font-weight: bold;
-            color: white;
-            margin-right: 1rem;
+            color: var(--dark-bg);
             position: relative;
         }
-
+        
         .status-indicator {
             position: absolute;
             bottom: 5px;
@@ -221,612 +242,512 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            border: 3px solid white;
+            border: 3px solid var(--dark-bg);
         }
-
+        
         .status-online {
-            background: var(--neon-green);
-            animation: pulse 2s infinite;
+            background: #4ade80;
         }
-
-        .status-offline {
-            background: var(--accent-orange);
-        }
-
+        
         .status-busy {
-            background: var(--warning-color);
+            background: #fbbf24;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        
+        .status-offline {
+            background: #ef4444;
         }
-
-        .doctor-info h3 {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
+        
+        .doctor-info {
+            flex: 1;
+        }
+        
+        .doctor-name {
+            font-size: 1.3rem;
             font-weight: 700;
-            color: var(--neon-green);
-            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
         }
-
+        
         .doctor-specialization {
-            color: var(--neon-blue);
+            color: var(--neon-green);
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            margin-bottom: 5px;
         }
-
+        
         .doctor-experience {
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* Doctor Details */
+        
         .doctor-details {
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
-
+        
         .detail-row {
             display: flex;
             align-items: center;
-            margin-bottom: 0.75rem;
+            gap: 10px;
+            margin-bottom: 8px;
             color: var(--text-secondary);
+            font-size: 0.9rem;
         }
-
+        
         .detail-row i {
+            color: var(--neon-green);
             width: 20px;
-            color: var(--neon-green);
-            margin-right: 0.75rem;
         }
-
-        /* Doctor Stats */
-        .doctor-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 0.75rem;
-            background: rgba(10, 10, 10, 0.6);
-            border-radius: 10px;
-        }
-
-        .stat-number {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neon-green);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Doctor Bio */
-        .doctor-bio {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: rgba(10, 10, 10, 0.4);
-            border-radius: 10px;
-            border-left: 3px solid var(--neon-green);
-        }
-
-        /* Action Buttons */
-        .doctor-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn-doctor {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .btn-consult {
-            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
-            color: white;
-        }
-
-        .btn-consult:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
-            color: white;
-        }
-
-        .btn-profile {
-            background: transparent;
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-        }
-
-        .btn-profile:hover {
-            background: var(--neon-green);
-            color: var(--dark-bg);
-        }
-
-        .btn-message {
-            background: transparent;
-            border: 2px solid var(--neon-blue);
-            color: var(--neon-blue);
-        }
-
-        .btn-message:hover {
-            background: var(--neon-blue);
-            color: white;
-        }
-
-        /* Rating Stars */
-        .rating {
+        
+        .doctor-rating {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-
+        
         .stars {
-            color: #ffc107;
-            margin-right: 0.5rem;
+            color: #fbbf24;
         }
-
+        
         .rating-text {
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* Availability Badge */
-        .availability-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .available {
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
-        }
-
-        .busy {
-            background: rgba(255, 193, 7, 0.2);
-            color: var(--warning-color);
-            border: 1px solid var(--warning-color);
-        }
-
-        .offline {
-            background: rgba(255, 107, 107, 0.2);
-            color: var(--accent-orange);
-            border: 1px solid var(--accent-orange);
-        }
-
-        /* Back Button */
-        .back-button {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-orange));
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+        
+        .doctor-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
+            gap: 10px;
+        }
+        
+        .btn-doctor {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--text-primary);
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
             transition: all 0.3s ease;
-            z-index: 999;
-            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
-            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
-
-        .back-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(155, 89, 182, 0.7);
-            color: white;
-            text-decoration: none;
+        
+        .btn-doctor:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            transform: translateY(-2px);
         }
-
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            color: var(--dark-bg);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
+            color: var(--dark-bg);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+        
+        .spinner {
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
             .doctors-grid {
                 grid-template-columns: 1fr;
             }
-
-            .doctor-stats {
-                grid-template-columns: 1fr;
-            }
-
+            
             .doctor-actions {
                 flex-direction: column;
-            }
-
-            .page-title {
-                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg"></div>
-
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                Clinicalink
+                <i class="fas fa-hospital"></i> Clinicalink
             </a>
             
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html">Home</a>
-                <a class="nav-link" href="doctors.html">Doctors</a>
-                <a class="nav-link" href="patients.html">Patients</a>
-                <a class="nav-link" href="messages.html">Messages</a>
-                <a class="nav-link" href="book-appointment.html">Book Appointment</a>
-                <a class="nav-link" href="login.html">Login</a>
-                <a class="nav-link" href="admin.html">Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="patients.html">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.html">Book Appointment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="live-chat.html">Live Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ai-assistant.html">AI Assistant</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Our Expert Doctors</h1>
-            <p class="lead">Connect with certified healthcare professionals</p>
-        </div>
+    <!-- User Info Display -->
+    <div class="user-info" id="userInfo">
+        <i class="fas fa-user-circle me-2"></i>
+        <span id="userName">Guest</span>
+        <button class="btn btn-sm btn-outline-light ms-3" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
 
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <input type="text" class="form-control filter-control" id="searchDoctor" placeholder="Search doctors by name...">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Our Doctors</h1>
+            <p class="page-subtitle">Find and connect with expert healthcare professionals</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section">
+        <div class="search-card">
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search doctors by name, specialization, or hospital...">
                 </div>
-                <div class="col-md-3">
-                    <select class="form-control filter-control" id="filterSpecialization">
+                <div class="col-md-4">
+                    <select class="search-input" id="specializationFilter">
                         <option value="">All Specializations</option>
                         <option value="cardiology">Cardiology</option>
                         <option value="neurology">Neurology</option>
                         <option value="pediatrics">Pediatrics</option>
                         <option value="orthopedics">Orthopedics</option>
+                        <option value="gynecology">Gynecology</option>
                         <option value="dermatology">Dermatology</option>
                         <option value="psychiatry">Psychiatry</option>
                         <option value="general">General Medicine</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <select class="form-control filter-control" id="filterAvailability">
-                        <option value="">All Status</option>
-                        <option value="available">Available</option>
-                        <option value="busy">Busy</option>
-                        <option value="offline">Offline</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-control filter-control" id="sortBy">
-                        <option value="rating">Highest Rated</option>
-                        <option value="experience">Most Experienced</option>
-                        <option value="patients">Most Patients</option>
-                        <option value="name">Name A-Z</option>
-                    </select>
-                </div>
             </div>
-        </div>
-
-        <!-- Doctors Grid -->
-        <div class="doctors-grid" id="doctorsGrid">
-            <!-- Doctor cards will be dynamically loaded here -->
+            <div class="filter-tags">
+                <div class="filter-tag active" onclick="filterByStatus('all')">All Doctors</div>
+                <div class="filter-tag" onclick="filterByStatus('available')">Available Now</div>
+                <div class="filter-tag" onclick="filterByStatus('top-rated')">Top Rated</div>
+                <div class="filter-tag" onclick="filterByStatus('experienced')">Experienced</div>
+                <div class="filter-tag" onclick="clearAndReload()">Clear & Reload</div>
+            </div>
         </div>
     </div>
 
-    <!-- Back Button -->
-    <a href="javascript:history.back()" class="back-button" title="Go Back">
-        <i class="fas fa-arrow-left"></i>
-    </a>
+    <!-- Doctors Container -->
+    <div class="doctors-container">
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>Loading doctors...</p>
+        </div>
+        
+        <div class="doctors-grid" id="doctorsGrid" style="display: none;">
+            <!-- Doctors will be loaded here dynamically -->
+        </div>
+        
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-user-md"></i>
+            <h3>No Doctors Found</h3>
+            <p>No doctors match your search criteria. Try adjusting your filters.</p>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Doctor data with comprehensive details
-        const doctors = [
+        let allDoctors = [];
+        let filteredDoctors = [];
+        let currentFilter = 'all';
+
+        // Check login status
+        function checkLoginStatus() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const user = JSON.parse(loggedInUser);
+                showUserInfo(user.fullName, user.type);
+            }
+        }
+
+        function showUserInfo(name, userType) {
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            
+            userName.textContent = `${name} (${userType})`;
+            userInfo.classList.add('show');
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
+
+        // Load doctors from localStorage
+        function loadDoctors() {
+            const doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+            
+            // Debug: Check if Priyanshu exists in localStorage
+            console.log('Doctors from localStorage:', doctors);
+            const priyanshuExists = doctors.some(d => d.fullName && d.fullName.toLowerCase().includes('priyanshu'));
+            console.log('Priyanshu found in localStorage:', priyanshuExists);
+            
+            // Load registered doctors only
+            if (doctors.length > 0) {
+                allDoctors = doctors.map(doctor => ({
+                    ...doctor,
+                    // Ensure all required fields exist
+                    id: doctor.id || doctor.email,
+                    fullName: doctor.fullName || doctor.name,
+                    specialization: doctor.specialization || 'general',
+                    experience: doctor.experience || 0,
+                    hospital: doctor.hospital || 'Private Practice',
+                    fee: doctor.fee || 500,
+                    rating: doctor.rating || 0.0,
+                    status: doctor.status || 'available',
+                    availableDays: doctor.availableDays || ['mon', 'tue', 'wed', 'thu', 'fri'],
+                    bio: doctor.bio || `Experienced ${doctor.specialization || 'doctor'} with ${doctor.experience || 0} years of experience.`
+                }));
+            } else {
+                // Show sample doctors only if no registered doctors
+                allDoctors = getSampleDoctors();
+            }
+            
+            filteredDoctors = [...allDoctors];
+            displayDoctors();
+        }
+
+        // Get sample doctors for demonstration
+        function getSampleDoctors() {
+            return [
+                // Indian Doctors
                 {
-                    id: 1,
-                    name: "Dr. John Smith",
-                    specialization: "Cardiology",
+                    id: '1',
+                    fullName: 'Dr. Priyanshu Sharma',
+                    specialization: 'cardiology',
                     experience: 15,
-                    qualification: "MBBS, MD (Cardiology)",
-                    license: "MC11111",
-                    email: "john.smith@clinicalink.com",
-                    phone: "+91-9876543210",
-                    location: "Mumbai, Maharashtra",
-                    status: "online",
+                    hospital: 'Apollo Hospitals, Delhi',
+                    fee: 1500,
                     rating: 4.8,
-                    totalPatients: 1200,
-                    consultations: 3500,
-                    successRate: 96,
-                    bio: "Dr. John Smith is a renowned cardiologist with 15 years of experience in treating heart conditions. He specializes in interventional cardiology and has performed over 1000 cardiac procedures.",
-                    languages: ["English", "Hindi", "Marathi"],
-                    education: "AIIMS, New Delhi",
-                    hospital: "Lilavati Hospital, Mumbai",
-                    consultationFee: 2500,
-                    availableSlots: ["9:00 AM", "11:00 AM", "2:00 PM", "4:00 PM"],
-                    awards: ["Best Cardiologist 2026", "Excellence in Interventional Cardiology"],
-                    specialties: ["Angioplasty", "Bypass Surgery", "Heart Failure", "Arrhythmia"]
+                    status: 'available',
+                    availableDays: ['mon', 'tue', 'wed', 'thu', 'fri'],
+                    bio: 'Expert in interventional cardiology with over 15 years of experience.'
                 },
                 {
-                    id: 2,
-                    name: "Dr. Sarah Johnson",
-                    specialization: "Pediatrics",
+                    id: '2',
+                    fullName: 'Dr. Anjali Patel',
+                    specialization: 'pediatrics',
                     experience: 12,
-                    qualification: "MBBS, MD (Pediatrics)",
-                    license: "MC22222",
-                    email: "sarah.johnson@clinicalink.com",
-                    phone: "+91-9876543211",
-                    location: "Delhi, NCR",
-                    status: "online",
+                    hospital: 'Fortis Healthcare, Mumbai',
+                    fee: 800,
                     rating: 4.9,
-                    totalPatients: 1500,
-                    consultations: 4200,
-                    successRate: 98,
-                    bio: "Dr. Sarah Johnson is a compassionate pediatrician dedicated to providing comprehensive healthcare for children. She has expertise in pediatric emergencies and newborn care.",
-                    languages: ["English", "Hindi", "Punjabi"],
-                    education: "PGIMER, Chandigarh",
-                    hospital: "Apollo Hospital, Delhi",
-                    consultationFee: 1800,
-                    availableSlots: ["10:00 AM", "12:00 PM", "3:00 PM", "5:00 PM"],
-                    awards: ["Best Pediatrician 2026", "Child Healthcare Excellence"],
-                    specialties: ["Newborn Care", "Vaccination", "Pediatric Emergencies", "Child Development"]
+                    status: 'available',
+                    availableDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+                    bio: 'Specialized in neonatal care and pediatric emergencies.'
                 },
                 {
-                    id: 3,
-                    name: "Dr. Michael Brown",
-                    specialization: "Neurology",
-                    experience: 18,
-                    qualification: "MBBS, MD (Neurology)",
-                    license: "MC33333",
-                    email: "michael.brown@clinicalink.com",
-                    phone: "+91-9876543212",
-                    location: "Bangalore, Karnataka",
-                    status: "busy",
-                    rating: 4.7,
-                    totalPatients: 890,
-                    consultations: 2600,
-                    successRate: 95,
-                    bio: "Dr. Michael Brown is a renowned neurologist specializing in brain and nervous system disorders. He has published numerous research papers and is a professor at a leading medical university.",
-                    languages: ["English", "Hindi", "Kannada", "Tamil"],
-                    education: "NIMHANS, Bangalore",
-                    hospital: "Manipal Hospital, Bangalore",
-                    consultationFee: 3000,
-                    availableSlots: ["11:00 AM", "3:00 PM"],
-                    awards: ["Neurology Research Award 2026", "Teaching Excellence"],
-                    specialties: ["Stroke", "Epilepsy", "Migraine", "Multiple Sclerosis"]
-                },
-                {
-                    id: 4,
-                    name: "Dr. Emily Davis",
-                    specialization: "Dermatology",
-                    experience: 8,
-                    qualification: "MBBS, MD (Dermatology)",
-                    license: "MC44444",
-                    email: "emily.davis@clinicalink.com",
-                    phone: "+91-9876543213",
-                    location: "Chennai, Tamil Nadu",
-                    status: "online",
-                    rating: 4.6,
-                    totalPatients: 650,
-                    consultations: 1800,
-                    successRate: 94,
-                    bio: "Dr. Emily Davis specializes in medical and cosmetic dermatology. She is passionate about helping patients achieve healthy, beautiful skin through the latest treatments and technologies.",
-                    languages: ["English", "Tamil", "Telugu"],
-                    education: "Madras Medical College, Chennai",
-                    hospital: "Fortis Malar, Chennai",
-                    consultationFee: 2000,
-                    availableSlots: ["10:00 AM", "1:00 PM", "4:00 PM"],
-                    awards: ["Best Dermatologist 2026", "Cosmetic Excellence"],
-                    specialties: ["Acne Treatment", "Skin Cancer", "Cosmetic Procedures", "Allergic Reactions"]
-                },
-                {
-                    id: 5,
-                    name: "Dr. Robert Wilson",
-                    specialization: "Orthopedics",
+                    id: '3',
+                    fullName: 'Dr. Rohan Gupta',
+                    specialization: 'orthopedics',
                     experience: 20,
-                    qualification: "MBBS, MS (Orthopedics)",
-                    license: "MC55555",
-                    email: "robert.wilson@clinicalink.com",
-                    phone: "+91-9876543214",
-                    location: "Kolkata, West Bengal",
-                    status: "offline",
-                    rating: 4.8,
-                    totalPatients: 1100,
-                    consultations: 3200,
-                    successRate: 97,
-                    bio: "Dr. Robert Wilson is an orthopedic surgeon with 20 years of experience in treating bone and joint conditions. He specializes in sports medicine and joint replacement surgery.",
-                    languages: ["English", "Hindi", "Bengali"],
-                    education: "IPGMER, Kolkata",
-                    hospital: "AMRI Hospital, Kolkata",
-                    consultationFee: 2800,
-                    availableSlots: ["9:00 AM", "2:00 PM"],
-                    awards: ["Orthopedic Excellence Award 2026", "Sports Medicine Specialist"],
-                    specialties: ["Joint Replacement", "Sports Injuries", "Fractures", "Arthritis"]
+                    hospital: 'Max Healthcare, Delhi',
+                    fee: 1200,
+                    rating: 4.7,
+                    status: 'busy',
+                    availableDays: ['tue', 'wed', 'thu', 'fri'],
+                    bio: 'Expert in joint replacement surgeries and sports medicine.'
+                },
+                // International Doctors
+                {
+                    id: '4',
+                    fullName: 'Dr. Sarah Johnson',
+                    specialization: 'gynecology',
+                    experience: 10,
+                    hospital: 'Columbia Asia, Bangalore',
+                    fee: 1000,
+                    rating: 4.6,
+                    status: 'available',
+                    availableDays: ['mon', 'tue', 'wed', 'thu', 'fri'],
+                    bio: 'Specialized in high-risk pregnancies and minimally invasive surgeries.'
                 },
                 {
-                    id: 6,
-                    name: "Dr. Lisa Anderson",
-                    specialization: "Psychiatry",
-                    experience: 10,
-                    qualification: "MBBS, MD (Psychiatry)",
-                    license: "MC66666",
-                    email: "lisa.anderson@clinicalink.com",
-                    phone: "+91-9876543215",
-                    location: "Hyderabad, Telangana",
-                    status: "online",
+                    id: '5',
+                    fullName: 'Dr. Michael Chen',
+                    specialization: 'neurology',
+                    experience: 18,
+                    hospital: 'AIIMS, New Delhi',
+                    fee: 2000,
                     rating: 4.9,
-                    totalPatients: 720,
-                    consultations: 2100,
-                    successRate: 94,
-                    bio: "Dr. Lisa Anderson is a compassionate psychiatrist specializing in mental health disorders. She believes in holistic treatment approaches and has helped thousands of patients improve their mental well-being.",
-                    languages: ["English", "Hindi", "Telugu", "Urdu"],
-                    education: "NIMHANS, Bangalore",
-                    hospital: "Care Hospital, Hyderabad",
-                    consultationFee: 2200,
-                    availableSlots: ["10:00 AM", "1:00 PM", "3:00 PM", "5:00 PM"],
-                    awards: ["Mental Health Advocate 2026", "Patient Choice Award"],
-                    specialties: ["Depression", "Anxiety", "Bipolar Disorder", "PTSD"]
+                    status: 'available',
+                    availableDays: ['mon', 'wed', 'fri'],
+                    bio: 'Expert in stroke management and epilepsy treatment.'
+                },
+                {
+                    id: '6',
+                    fullName: 'Dr. Emily Williams',
+                    specialization: 'dermatology',
+                    experience: 8,
+                    hospital: 'Kaya Skin Clinic, Mumbai',
+                    fee: 600,
+                    rating: 4.5,
+                    status: 'available',
+                    availableDays: ['tue', 'thu', 'sat', 'sun'],
+                    bio: 'Specialized in cosmetic dermatology and laser treatments.'
                 }
             ];
-
-        let filteredDoctors = [...doctors];
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderDoctors(doctors);
-            setupEventListeners();
-        });
-
-        // Setup event listeners
-        function setupEventListeners() {
-            document.getElementById('searchDoctor').addEventListener('input', filterDoctors);
-            document.getElementById('filterSpecialization').addEventListener('change', filterDoctors);
-            document.getElementById('filterAvailability').addEventListener('change', filterDoctors);
-            document.getElementById('sortBy').addEventListener('change', sortDoctors);
         }
 
-        // Render doctors
-        function renderDoctors(doctorsToRender) {
-            const grid = document.getElementById('doctorsGrid');
-            grid.innerHTML = '';
-
-            doctorsToRender.forEach(doctor => {
-                const card = createDoctorCard(doctor);
-                grid.appendChild(card);
-            });
-        }
-
-        // Create doctor card
-        function createDoctorCard(doctor) {
-            const card = document.createElement('div');
-            card.className = 'doctor-card';
+        // Display doctors
+        function displayDoctors() {
+            const doctorsGrid = document.getElementById('doctorsGrid');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
             
-            const statusClass = doctor.status === 'online' ? 'available' : 
-                              doctor.status === 'busy' ? 'busy' : 'offline';
-            const statusText = doctor.status === 'online' ? 'Available Now' : 
-                             doctor.status === 'busy' ? 'Busy' : 'Offline';
-
-            card.innerHTML = `
-                <div class="doctor-header">
-                    <div class="doctor-avatar">
-                        ${doctor.name.split(' ').map(n => n[0]).join('')}
-                        <div class="status-indicator status-${doctor.status}"></div>
+            // Hide loading state
+            loadingState.style.display = 'none';
+            
+            if (filteredDoctors.length === 0) {
+                doctorsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            doctorsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            doctorsGrid.innerHTML = filteredDoctors.map(doctor => `
+                <div class="doctor-card">
+                    <div class="doctor-header">
+                        <div class="doctor-avatar">
+                            ${doctor.fullName.charAt(0)}
+                            <div class="status-indicator status-${doctor.status || 'online'}"></div>
+                        </div>
+                        <div class="doctor-info">
+                            <div class="doctor-name">${doctor.fullName}</div>
+                            <div class="doctor-specialization">${capitalizeFirst(doctor.specialization)}</div>
+                            <div class="doctor-experience">${doctor.experience} years experience</div>
+                        </div>
                     </div>
-                    <div class="doctor-info">
-                        <h3>${doctor.name}</h3>
-                        <div class="doctor-specialization">${doctor.specialization}</div>
-                        <div class="doctor-experience">${doctor.experience} years experience</div>
+                    
+                    <div class="doctor-details">
+                        <div class="detail-row">
+                            <i class="fas fa-hospital"></i>
+                            <span>${doctor.hospital}</span>
+                        </div>
+                        <div class="detail-row">
+                            <i class="fas fa-rupee-sign"></i>
+                            <span>Consultation: ₹${doctor.fee}</span>
+                        </div>
+                        <div class="detail-row">
+                            <i class="fas fa-calendar"></i>
+                            <span>${formatAvailableDays(doctor.availableDays)}</span>
+                        </div>
                     </div>
-                </div>
-
-                <div class="availability-badge ${statusClass}">
-                    ${statusText}
-                </div>
-
-                <div class="rating">
-                    <div class="stars">
-                        ${generateStars(doctor.rating)}
+                    
+                    <div class="doctor-rating">
+                        <div class="stars">
+                            ${generateStars(doctor.rating)}
+                        </div>
+                        <span class="rating-text">${doctor.rating} (${Math.floor(Math.random() * 100) + 50} reviews)</span>
                     </div>
-                    <span class="rating-text">${doctor.rating} (${doctor.totalPatients} patients)</span>
-                </div>
-
-                <div class="doctor-details">
-                    <div class="detail-row">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>${doctor.qualification}</span>
-                    </div>
-                    <div class="detail-row">
-                        <i class="fas fa-hospital"></i>
-                        <span>${doctor.hospital}</span>
-                    </div>
-                    <div class="detail-row">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${doctor.location}</span>
-                    </div>
-                    <div class="detail-row">
-                        <i class="fas fa-language"></i>
-                        <span>${doctor.languages.join(', ')}</span>
-                    </div>
-                    <div class="detail-row">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>Consultation: $${doctor.consultationFee}</span>
-                    </div>
-                </div>
-
-                <div class="doctor-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">${doctor.totalPatients}</div>
-                        <div class="stat-label">Patients</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${doctor.consultations}</div>
-                        <div class="stat-label">Consultations</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${doctor.successRate}%</div>
-                        <div class="stat-label">Success Rate</div>
+                    
+                    <div class="doctor-actions">
+                        <a href="#" class="btn-doctor" onclick="viewDoctorProfile('${doctor.id}')">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="book-appointment.html?doctor=${doctor.id}" class="btn-doctor btn-primary">
+                            <i class="fas fa-calendar"></i> Book
+                        </a>
                     </div>
                 </div>
-
-                <div class="doctor-bio">
-                    <p>${doctor.bio}</p>
-                </div>
-
-                <div class="doctor-actions">
-                    <button class="btn-doctor btn-consult" onclick="bookConsultation(${doctor.id})" ${doctor.status === 'offline' ? 'disabled' : ''}>
-                        <i class="fas fa-calendar-check me-2"></i>
-                        ${doctor.status === 'offline' ? 'Unavailable' : 'Book Consultation'}
-                    </button>
-                    <button class="btn-doctor btn-profile" onclick="viewFullProfile(${doctor.id})">
-                        <i class="fas fa-user-md me-2"></i>
-                        Full Profile
-                    </button>
-                    <button class="btn-doctor btn-message" onclick="sendMessage(${doctor.id})">
-                        <i class="fas fa-comment me-2"></i>
-                        Message
-                    </button>
-                </div>
-            `;
-
-            return card;
+            `).join('');
         }
 
-        // Generate star rating
+        // Helper functions
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
         function generateStars(rating) {
             const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-            const emptyStars = 5 - fullStars - halfStar;
-            
+            const hasHalfStar = rating % 1 !== 0;
             let stars = '';
+            
             for (let i = 0; i < fullStars; i++) {
                 stars += '<i class="fas fa-star"></i>';
             }
-            if (halfStar) {
+            
+            if (hasHalfStar) {
                 stars += '<i class="fas fa-star-half-alt"></i>';
             }
+            
+            const emptyStars = 5 - Math.ceil(rating);
             for (let i = 0; i < emptyStars; i++) {
                 stars += '<i class="far fa-star"></i>';
             }
@@ -834,73 +755,85 @@
             return stars;
         }
 
-        // Filter doctors
-        function filterDoctors() {
-            const searchTerm = document.getElementById('searchDoctor').value.toLowerCase();
-            const specialization = document.getElementById('filterSpecialization').value;
-            const availability = document.getElementById('filterAvailability').value;
+        function formatAvailableDays(days) {
+            if (!days || days.length === 0) return 'Flexible';
+            
+            const dayNames = {
+                'mon': 'Mon', 'tue': 'Tue', 'wed': 'Wed',
+                'thu': 'Thu', 'fri': 'Fri', 'sat': 'Sat', 'sun': 'Sun'
+            };
+            
+            return days.map(day => dayNames[day]).join(', ');
+        }
 
-            filteredDoctors = doctors.filter(doctor => {
-                const matchesSearch = doctor.name.toLowerCase().includes(searchTerm) ||
-                                    doctor.specialization.toLowerCase().includes(searchTerm);
-                const matchesSpecialization = !specialization || doctor.specialization.toLowerCase() === specialization;
-                const matchesAvailability = !availability || doctor.status === availability;
-
-                return matchesSearch && matchesSpecialization && matchesAvailability;
+        // Filter functions
+        function filterByStatus(status) {
+            currentFilter = status;
+            
+            // Update active filter tag
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
             });
-
-            renderDoctors(filteredDoctors);
+            event.target.classList.add('active');
+            
+            // Apply filter
+            switch(status) {
+                case 'available':
+                    filteredDoctors = allDoctors.filter(d => d.status === 'available');
+                    break;
+                case 'top-rated':
+                    filteredDoctors = allDoctors.filter(d => d.rating >= 4.8);
+                    break;
+                case 'experienced':
+                    filteredDoctors = allDoctors.filter(d => d.experience >= 10);
+                    break;
+                default:
+                    filteredDoctors = [...allDoctors];
+            }
+            
+            // Apply search and specialization filters
+            applySearchFilters();
         }
 
-        // Sort doctors
-        function sortDoctors() {
-            const sortBy = document.getElementById('sortBy').value;
-
-            filteredDoctors.sort((a, b) => {
-                switch(sortBy) {
-                    case 'rating':
-                        return b.rating - a.rating;
-                    case 'experience':
-                        return b.experience - a.experience;
-                    case 'patients':
-                        return b.totalPatients - a.totalPatients;
-                    case 'name':
-                        return a.name.localeCompare(b.name);
-                    default:
-                        return 0;
-                }
+        function applySearchFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const specialization = document.getElementById('specializationFilter').value;
+            
+            filteredDoctors = filteredDoctors.filter(doctor => {
+                const matchesSearch = !searchTerm || 
+                    doctor.fullName.toLowerCase().includes(searchTerm) ||
+                    doctor.specialization.toLowerCase().includes(searchTerm) ||
+                    doctor.hospital.toLowerCase().includes(searchTerm);
+                
+                const matchesSpecialization = !specialization || doctor.specialization === specialization;
+                
+                return matchesSearch && matchesSpecialization;
             });
-
-            renderDoctors(filteredDoctors);
+            
+            displayDoctors();
         }
 
-        // Action functions
-        function bookConsultation(doctorId) {
-            const doctor = doctors.find(d => d.id === doctorId);
-            if (doctor) {
-                // Store selected doctor for booking
-                localStorage.setItem('selectedDoctor', JSON.stringify(doctor));
-                window.location.href = 'book-appointment.html';
+        function viewDoctorProfile(doctorId) {
+            alert(`Viewing profile for doctor ${doctorId}`);
+        }
+
+        function clearAndReload() {
+            if (confirm('This will clear all registered doctors and reload with sample data. Continue?')) {
+                localStorage.removeItem('doctors');
+                console.log('Cleared doctors localStorage');
+                loadDoctors();
             }
         }
 
-        function viewFullProfile(doctorId) {
-            const doctor = doctors.find(d => d.id === doctorId);
-            if (doctor) {
-                // Store doctor data and redirect to profile page
-                localStorage.setItem('doctorProfile', JSON.stringify(doctor));
-                window.location.href = 'doctor-profile.html';
-            }
-        }
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', applySearchFilters);
+        document.getElementById('specializationFilter').addEventListener('change', applySearchFilters);
 
-        function sendMessage(doctorId) {
-            const doctor = doctors.find(d => d.id === doctorId);
-            if (doctor) {
-                // Store doctor data and redirect to messaging
-                localStorage.setItem('messageDoctor', JSON.stringify(doctor));
-                window.location.href = 'messages.html';
-            }
-        }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            loadDoctors();
+        });
     </script>
 </body>
 </html>

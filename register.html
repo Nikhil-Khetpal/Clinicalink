@@ -157,257 +157,170 @@
         }
 
         .user-type-card.selected {
-            border-color: var(--neon-green);
             background: rgba(0, 255, 136, 0.1);
-        }
-
-        .user-type-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--neon-green);
-        }
-
-        /* Form Styles */
-        .form-control-gaming {
-            background: rgba(10, 10, 10, 0.8);
-            border: 2px solid rgba(0, 255, 136, 0.3);
-            border-radius: 10px;
-            color: var(--text-primary);
-            padding: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .form-control-gaming:focus {
             border-color: var(--neon-green);
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-            background: rgba(10, 10, 10, 0.9);
-            outline: none;
+        }
+        
+        .user-type-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--dark-bg);
+        }
+        
+        .registration-form {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-control-gaming {
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-gaming:focus {
+            background: rgba(10, 10, 10, 0.7);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
             color: var(--text-primary);
         }
-
-        .form-control-gaming.is-invalid {
-            border-color: var(--accent-orange);
-            background: rgba(255, 107, 107, 0.1);
+        
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
         }
-
-        .form-control-gaming.is-valid {
-            border-color: var(--neon-green);
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        .invalid-feedback {
-            color: var(--accent-orange);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .valid-feedback {
-            color: var(--neon-green);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        /* Buttons */
+        
         .btn-gaming {
             background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
             border: none;
-            color: white;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
+            color: var(--dark-bg);
             font-weight: 700;
+            padding: 15px 40px;
             border-radius: 50px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            width: 100%;
+            font-size: 1.1rem;
         }
-
+        
         .btn-gaming:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
-            color: white;
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.5);
+            color: var(--dark-bg);
         }
-
-        .btn-gaming:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Success Modal */
-        .success-modal {
+        
+        .doctor-fields, .patient-fields {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
         }
-
-        .success-modal.show {
-            display: flex;
+        
+        .doctor-fields.show, .patient-fields.show {
+            display: block;
         }
-
-        .success-content {
-            background: rgba(26, 26, 46, 0.95);
-            border: 2px solid var(--neon-green);
-            border-radius: 20px;
-            padding: 3rem;
+        
+        .success-message {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 10px;
+            padding: 20px;
             text-align: center;
-            max-width: 500px;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            color: var(--neon-green);
-            margin-bottom: 1rem;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        /* Doctor Availability Alert */
-        .doctor-alert {
-            background: rgba(255, 193, 7, 0.2);
-            border: 2px solid var(--warning-color);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            margin-top: 20px;
             display: none;
         }
-
-        .doctor-alert.show {
+        
+        .success-message.show {
             display: block;
         }
-
-        /* Back Button */
-        .back-button {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-orange));
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 999;
-            box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5);
-            text-decoration: none;
-        }
-
-        .back-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(155, 89, 182, 0.7);
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-        }
-
-        .loading-spinner.show {
-            display: block;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 255, 136, 0.3);
-            border-top: 3px solid var(--neon-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        
         /* Responsive */
         @media (max-width: 768px) {
-            .registration-container {
-                margin: 6rem 1rem 2rem;
-                padding: 2rem;
-            }
-
             .user-type-selection {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
             }
-
-            .registration-title {
-                font-size: 2rem;
+            
+            .nav-link {
+                font-size: 1.5rem;
+                padding: 8px 15px;
+                margin: 0 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg"></div>
-
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                Clinicalink
+                <i class="fas fa-hospital"></i> Clinicalink
             </a>
             
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html">Home</a>
-                <a class="nav-link" href="login.html">Login</a>
-                <a class="nav-link" href="admin.html">Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doctors.html">Doctors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="patients.html">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.html">Book Appointment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="live-chat.html">Live Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ai-assistant.html">AI Assistant</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
+    <!-- User Info Display -->
+    <div class="user-info" id="userInfo">
+        <i class="fas fa-user-circle me-2"></i>
+        <span id="userName">Guest</span>
+        <button class="btn btn-sm btn-outline-light ms-3" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+
     <!-- Registration Container -->
     <div class="registration-container">
-        <!-- Doctor Availability Alert -->
-        <div class="doctor-alert" id="doctorAlert">
-            <h5><i class="fas fa-info-circle me-2"></i>Doctor Availability Notice</h5>
-            <p>Currently, all doctors are busy with consultations. Don't worry! You can still register and we'll notify you as soon as a doctor becomes available. Your first consultation will be completely free!</p>
-        </div>
-
         <div class="registration-header">
-            <h2 class="registration-title">Join Clinicalink</h2>
-            <p class="text-muted">Choose your path and start your healthcare journey</p>
+            <h1 class="registration-title">Join Clinicalink</h1>
+            <p class="lead text-muted">Create your account and start your healthcare journey</p>
         </div>
         
         <!-- User Type Selection -->
@@ -416,309 +329,229 @@
                 <div class="user-type-icon">
                     <i class="fas fa-user"></i>
                 </div>
-                <h5>Patient</h5>
-                <p>Get personalized healthcare, track your progress, and earn rewards</p>
+                <h4>Patient</h4>
+                <p>Get personalized healthcare and track your progress</p>
             </div>
             <div class="user-type-card" onclick="selectUserType('doctor', this)">
                 <div class="user-type-icon">
                     <i class="fas fa-user-md"></i>
                 </div>
-                <h5>Doctor</h5>
-                <p>Join our network of healthcare professionals and help patients</p>
+                <h4>Doctor</h4>
+                <p>Join our network and help patients</p>
             </div>
         </div>
         
         <!-- Registration Form -->
-        <form id="registrationForm" novalidate>
-            <input type="hidden" id="userType" name="userType" value="patient">
-            
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Full Name *</label>
-                    <input type="text" class="form-control form-control-gaming" id="name" name="name" required placeholder="Enter your full name">
-                    <div class="invalid-feedback"></div>
-                    <div class="valid-feedback"></div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Email Address *</label>
-                    <input type="email" class="form-control form-control-gaming" id="email" name="email" required placeholder="Enter your email">
-                    <div class="invalid-feedback"></div>
-                    <div class="valid-feedback"></div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Phone Number *</label>
-                    <input type="tel" class="form-control form-control-gaming" id="phone" name="phone" required placeholder="Enter your phone number">
-                    <div class="invalid-feedback"></div>
-                    <div class="valid-feedback"></div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Password *</label>
-                    <input type="password" class="form-control form-control-gaming" id="password" name="password" required minlength="8" placeholder="Create a strong password">
-                    <div class="invalid-feedback"></div>
-                    <div class="valid-feedback"></div>
-                </div>
-            </div>
-            
-            <!-- Patient Specific Fields -->
-            <div id="patientFields">
+        <div class="registration-form">
+            <form id="registrationForm">
+                <input type="hidden" id="userType" name="userType" value="patient">
+                
+                <!-- Common Fields -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Age</label>
-                        <input type="number" class="form-control form-control-gaming" id="age" name="age" min="1" max="120" placeholder="Enter your age">
-                        <div class="invalid-feedback"></div>
-                        <div class="valid-feedback"></div>
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-control form-control-gaming" name="fullName" required placeholder="Enter your full name">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Gender</label>
-                        <select class="form-control form-control-gaming" id="gender" name="gender">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control form-control-gaming" name="email" required placeholder="Enter your email">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone Number *</label>
+                        <input type="tel" class="form-control form-control-gaming" name="phone" required placeholder="+91 98765 43210">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Password *</label>
+                        <input type="password" class="form-control form-control-gaming" name="password" required placeholder="Create a strong password">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date of Birth *</label>
+                        <input type="date" class="form-control form-control-gaming" name="dob" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Gender *</label>
+                        <select class="form-control form-control-gaming" name="gender" required>
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                             <option value="other">Other</option>
                         </select>
-                        <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                
                 <div class="mb-3">
-                    <label class="form-label">Address</label>
-                    <textarea class="form-control form-control-gaming" id="address" name="address" rows="3" placeholder="Enter your address"></textarea>
-                    <div class="invalid-feedback"></div>
+                    <label class="form-label">Address *</label>
+                    <textarea class="form-control form-control-gaming" name="address" required placeholder="Enter your full address" rows="3"></textarea>
                 </div>
-            </div>
+                
+                <!-- Doctor Specific Fields -->
+                <div class="doctor-fields" id="doctorFields">
+                    <hr style="border-color: rgba(0, 255, 136, 0.3);">
+                    <h4 class="text-white mb-4">Professional Information</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Medical License Number *</label>
+                            <input type="text" class="form-control form-control-gaming" name="licenseNumber" placeholder="Enter your license number">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Specialization *</label>
+                            <select class="form-control form-control-gaming" name="specialization">
+                                <option value="">Select Specialization</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="gynecology">Gynecology</option>
+                                <option value="dermatology">Dermatology</option>
+                                <option value="psychiatry">Psychiatry</option>
+                                <option value="general">General Medicine</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Years of Experience *</label>
+                            <input type="number" class="form-control form-control-gaming" name="experience" min="0" placeholder="Years of experience">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Hospital/Clinic Name *</label>
+                            <input type="text" class="form-control form-control-gaming" name="hospital" placeholder="Hospital or Clinic name">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Consultation Fee (₹)</label>
+                            <input type="number" class="form-control form-control-gaming" name="fee" min="0" placeholder="Consultation fee">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Available Days *</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="mon"> Mon
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="tue"> Tue
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="wed"> Wed
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="thu"> Thu
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="fri"> Fri
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="sat"> Sat
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="availableDays" value="sun"> Sun
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Bio/About</label>
+                        <textarea class="form-control form-control-gaming" name="bio" placeholder="Tell us about yourself and your expertise" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Patient Specific Fields -->
+                <div class="patient-fields show" id="patientFields">
+                    <hr style="border-color: rgba(0, 255, 136, 0.3);">
+                    <h4 class="text-white mb-4">Health Information</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Blood Group</label>
+                            <select class="form-control form-control-gaming" name="bloodGroup">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Allergies (if any)</label>
+                            <input type="text" class="form-control form-control-gaming" name="allergies" placeholder="List any known allergies">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Existing Conditions</label>
+                            <input type="text" class="form-control form-control-gaming" name="conditions" placeholder="Any existing medical conditions">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Emergency Contact</label>
+                            <input type="tel" class="form-control form-control-gaming" name="emergencyContact" placeholder="Emergency contact number">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-gaming btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </div>
+            </form>
             
-            <!-- Doctor Specific Fields -->
-            <div id="doctorFields" style="display: none;">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Specialization</label>
-                        <select class="form-control form-control-gaming" id="specialization" name="specialization">
-                            <option value="">Select Specialization</option>
-                            <option value="general">General Medicine</option>
-                            <option value="cardiology">Cardiology</option>
-                            <option value="neurology">Neurology</option>
-                            <option value="pediatrics">Pediatrics</option>
-                            <option value="orthopedics">Orthopedics</option>
-                            <option value="dermatology">Dermatology</option>
-                            <option value="psychiatry">Psychiatry</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Experience (Years)</label>
-                        <input type="number" class="form-control form-control-gaming" id="experience" name="experience" min="0" placeholder="Years of experience">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Medical Degree</label>
-                        <input type="text" class="form-control form-control-gaming" id="qualification" name="qualification" placeholder="e.g., MBBS, MD">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">License Number</label>
-                        <input type="text" class="form-control form-control-gaming" id="license" name="license" placeholder="Medical license number">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms" required>
-                    <label class="form-check-label" for="terms">
-                        I agree to the <a href="#" class="text-success">Terms and Conditions</a> and <a href="#" class="text-success">Privacy Policy</a>
-                    </label>
-                    <div class="invalid-feedback"></div>
-                </div>
-            </div>
-            
-            <div class="text-center">
-                <button type="submit" class="btn btn-gaming" id="submitBtn">
-                    <i class="fas fa-user-plus me-2"></i>Create Account
+            <div class="success-message" id="successMessage">
+                <h4 class="text-success mb-3">Registration Successful!</h4>
+                <p>Your account has been created successfully. You can now login with your credentials.</p>
+                <button class="btn btn-success" onclick="window.location.href='login.html'">
+                    <i class="fas fa-sign-in-alt me-2"></i>Go to Login
                 </button>
             </div>
-        </form>
-        
-        <div class="text-center mt-3">
-            <p>Already have an account? <a href="login.html" class="text-success">Login here</a></p>
         </div>
     </div>
-
-    <!-- Success Modal -->
-    <div class="success-modal" id="successModal">
-        <div class="success-content">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h3 class="mb-3">Registration Successful!</h3>
-            <p class="mb-4">Welcome to Clinicalink! Your account has been created successfully.</p>
-            <div id="specialMessage" class="mb-4"></div>
-            <button class="btn btn-gaming" onclick="redirectToLogin()">
-                Continue to Login
-            </button>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Back Button -->
-    <a href="javascript:history.back()" class="back-button" title="Go Back">
-        <i class="fas fa-arrow-left"></i>
-    </a>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
         let selectedUserType = 'patient';
-        let doctorsAvailable = false; // Simulate doctor availability
 
-        // Check doctor availability on page load
-        window.addEventListener('load', function() {
-            checkDoctorAvailability();
-            setupFormValidation();
-        });
-
-        function checkDoctorAvailability() {
-            // Simulate checking doctor availability
-            setTimeout(() => {
-                if (!doctorsAvailable) {
-                    document.getElementById('doctorAlert').classList.add('show');
-                }
-            }, 1000);
-        }
-
-        function setupFormValidation() {
-            const form = document.getElementById('registrationForm');
-            const inputs = form.querySelectorAll('.form-control-gaming');
-            
-            inputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    validateField(this);
-                });
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const user = JSON.parse(loggedInUser);
+                showUserInfo(user.name, user.type);
                 
-                input.addEventListener('input', function() {
-                    if (this.classList.contains('is-invalid')) {
-                        validateField(this);
-                    }
-                });
-            });
-        }
-
-        function validateField(field) {
-            const value = field.value.trim();
-            const fieldName = field.name;
-            let isValid = true;
-            let errorMessage = '';
-
-            // Remove previous validation classes
-            field.classList.remove('is-valid', 'is-invalid');
-            
-            // Get feedback elements
-            const invalidFeedback = field.parentElement.querySelector('.invalid-feedback');
-            const validFeedback = field.parentElement.querySelector('.valid-feedback');
-
-            switch(fieldName) {
-                case 'name':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Full name is required';
-                    } else if (value.length < 3) {
-                        isValid = false;
-                        errorMessage = 'Name must be at least 3 characters';
-                    } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Name should only contain letters and spaces';
-                    }
-                    break;
-                    
-                case 'email':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Email is required';
-                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Please enter a valid email address';
-                    }
-                    break;
-                    
-                case 'phone':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Phone number is required';
-                    } else if (!/^[0-9+\-\s()]+$/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Please enter a valid phone number';
-                    } else if (value.length < 10) {
-                        isValid = false;
-                        errorMessage = 'Phone number must be at least 10 digits';
-                    }
-                    break;
-                    
-                case 'password':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Password is required';
-                    } else if (value.length < 8) {
-                        isValid = false;
-                        errorMessage = 'Password must be at least 8 characters';
-                    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Password must contain uppercase, lowercase, and numbers';
-                    }
-                    break;
-                    
-                case 'age':
-                    if (value && (value < 1 || value > 120)) {
-                        isValid = false;
-                        errorMessage = 'Please enter a valid age between 1 and 120';
-                    }
-                    break;
-                    
-                case 'experience':
-                    if (value && value < 0) {
-                        isValid = false;
-                        errorMessage = 'Experience cannot be negative';
-                    }
-                    break;
-            }
-
-            // Apply validation
-            if (isValid) {
-                field.classList.add('is-valid');
-                if (validFeedback) {
-                    validFeedback.textContent = 'Looks good!';
-                }
-            } else {
-                field.classList.add('is-invalid');
-                if (invalidFeedback) {
-                    invalidFeedback.textContent = errorMessage;
+                // Redirect based on user type
+                if (user.type === 'doctor') {
+                    window.location.href = 'doctor-dashboard.html';
+                } else if (user.type === 'patient') {
+                    window.location.href = 'patient-dashboard.html';
                 }
             }
-
-            return isValid;
         }
 
-        function selectUserType(type, card) {
+        function selectUserType(type, element) {
             selectedUserType = type;
-            
-            // Remove selected class from all cards
-            document.querySelectorAll('.user-type-card').forEach(c => {
-                c.classList.remove('selected');
-            });
-            
-            // Add selected class to clicked card
-            card.classList.add('selected');
-            
-            // Update hidden input
             document.getElementById('userType').value = type;
+            
+            // Update UI
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
             
             // Show/hide relevant fields
             const patientFields = document.getElementById('patientFields');
@@ -736,54 +569,125 @@
         // Registration form submission
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Registration form submitted');
             
-            // Validate all fields
-            const form = e.target;
-            const inputs = form.querySelectorAll('.form-control-gaming[required]');
-            let isFormValid = true;
+            const formData = new FormData(this);
+            const userType = formData.get('userType');
             
-            inputs.forEach(input => {
-                if (!validateField(input)) {
-                    isFormValid = false;
+            console.log('User type:', userType);
+            console.log('Form data:', Object.fromEntries(formData));
+            
+            // Validate required fields
+            const requiredFields = ['fullName', 'email', 'password', 'phone'];
+            for (const field of requiredFields) {
+                if (!formData.get(field)) {
+                    console.error('Missing required field:', field);
+                    showError(`Please fill in all required fields`);
+                    return;
                 }
-            });
-            
-            // Validate terms checkbox
-            const termsCheckbox = document.getElementById('terms');
-            if (!termsCheckbox.checked) {
-                termsCheckbox.parentElement.classList.add('is-invalid');
-                termsCheckbox.parentElement.querySelector('.invalid-feedback').textContent = 'You must agree to the terms and conditions';
-                isFormValid = false;
-            } else {
-                termsCheckbox.parentElement.classList.remove('is-invalid');
             }
             
-            if (!isFormValid) {
-                // Scroll to first invalid field
-                const firstInvalid = form.querySelector('.is-invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstInvalid.focus();
-                }
+            // Validate email format
+            const email = formData.get('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                console.error('Invalid email format:', email);
+                showError('Please enter a valid email address');
                 return;
             }
             
-            // Show loading
-            document.getElementById('loadingSpinner').classList.add('show');
-            document.getElementById('submitBtn').disabled = true;
+            // Check if email already exists in respective user type
+            const storageKey = userType === 'doctor' ? 'doctors' : 'patients';
+            const existingUsers = JSON.parse(localStorage.getItem(storageKey) || '[]');
             
-            // Simulate API call
-            setTimeout(() => {
-                document.getElementById('loadingSpinner').classList.remove('show');
-                document.getElementById('submitBtn').disabled = false;
+            console.log('Existing users:', existingUsers.length);
+            console.log('Checking for duplicate email:', email);
+            
+            if (existingUsers.some(user => user.email === email)) {
+                console.error('Email already exists:', email);
+                showError('An account with this email already exists');
+                return;
+            }
+            
+            // Create user object with type-specific data
+            const userData = {
+                id: generateId(),
+                fullName: formData.get('fullName'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                phone: formData.get('phone'),
+                type: userType,
+                registeredAt: new Date().toISOString()
+            };
+            
+            console.log('Base user data:', userData);
+            
+            // Add type-specific fields
+            if (userType === 'doctor') {
+                userData.medicalLicense = formData.get('licenseNumber');
+                userData.specialization = formData.get('specialization');
+                userData.experience = parseInt(formData.get('experience')) || 0;
+                userData.hospital = formData.get('hospital');
+                userData.fee = parseInt(formData.get('fee')) || 0;
+                userData.availableDays = formData.getAll('availableDays');
+                userData.patients = []; // Initialize empty patients array
+                userData.appointments = []; // Initialize empty appointments array
+                userData.rating = 0.0; // Initialize rating
+                userData.status = 'available'; // Set default status
                 
-                // Show success modal
-                showSuccessModal();
+                console.log('Doctor data added:', {
+                    medicalLicense: userData.medicalLicense,
+                    specialization: userData.specialization,
+                    experience: userData.experience,
+                    hospital: userData.hospital,
+                    fee: userData.fee,
+                    availableDays: userData.availableDays
+                });
+            } else {
+                userData.age = formData.get('age');
+                userData.gender = formData.get('gender');
+                userData.bloodGroup = formData.get('bloodGroup');
+                userData.allergies = formData.get('allergies') || 'None';
+                userData.conditions = formData.get('conditions') || 'None';
+                userData.emergencyContact = formData.get('emergencyContact');
+                userData.doctors = []; // Initialize empty doctors array
+                userData.appointments = []; // Initialize empty appointments array
+                userData.medicalHistory = []; // Initialize empty medical history
+                
+                console.log('Patient data added:', {
+                    age: userData.age,
+                    gender: userData.gender,
+                    bloodGroup: userData.bloodGroup,
+                    allergies: userData.allergies,
+                    conditions: userData.conditions,
+                    emergencyContact: userData.emergencyContact
+                });
+            }
+            
+            // Save to appropriate storage
+            existingUsers.push(userData);
+            localStorage.setItem(storageKey, JSON.stringify(existingUsers));
+            
+            console.log('User saved to localStorage:', storageKey);
+            console.log('Total users in storage:', existingUsers.length);
+            
+            // Show success message
+            showSuccess('Registration successful! Redirecting to login...');
+            
+            // Reset form
+            this.reset();
+            document.getElementById('doctorFields').style.display = 'none';
+            document.getElementById('patientFields').style.display = 'none';
+            
+            // Redirect to login after delay
+            setTimeout(() => {
+                console.log('Redirecting to login page');
+                window.location.href = 'login.html';
             }, 2000);
         });
 
-        function showSuccessModal() {
-            const modal = document.getElementById('successModal');
+        function showSuccess(message) {
+            const successModal = document.getElementById('successModal');
             const specialMessage = document.getElementById('specialMessage');
             
             if (selectedUserType === 'patient') {

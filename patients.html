@@ -945,6 +945,36 @@
             renderPatients(filteredPatients);
         }
 
+        // Load patients from localStorage
+        function loadPatients() {
+            const patients = JSON.parse(localStorage.getItem('patients') || '[]');
+            
+            // Load registered patients only
+            if (patients.length > 0) {
+                allPatients = patients.map(patient => ({
+                    ...patient,
+                    // Ensure all required fields exist
+                    id: patient.id || patient.email,
+                    fullName: patient.fullName || patient.name,
+                    age: patient.age || 'Not specified',
+                    gender: patient.gender || 'Not specified',
+                    bloodGroup: patient.bloodGroup || 'Not specified',
+                    phone: patient.phone || 'Not specified',
+                    allergies: patient.allergies || 'None',
+                    conditions: patient.conditions || 'None',
+                    emergencyContact: patient.emergencyContact || 'Not specified',
+                    status: patient.status || 'active',
+                    registeredAt: patient.registeredAt || new Date().toISOString()
+                }));
+            } else {
+                // Keep existing sample patients if no registered patients
+                allPatients = getSamplePatients();
+            }
+            
+            filteredPatients = [...allPatients];
+            renderPatients(filteredPatients);
+        }
+
         // Sort patients
         function sortPatients() {
             const sortBy = document.getElementById('sortBy').value;

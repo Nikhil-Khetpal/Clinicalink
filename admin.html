@@ -614,7 +614,7 @@
             <section id="doctors-section" class="content-section" style="display: none;">
                 <div class="data-section">
                     <div class="section-header">
-                        <h3 class="section-title">Doctors Management</h3>
+                        <h3 class="section-title">Available Doctors</h3>
                         <div class="d-flex gap-2">
                             <button class="btn btn-gaming btn-sm" onclick="exportDoctors()">
                                 <i class="fas fa-download"></i> Export
@@ -622,6 +622,46 @@
                             <button class="btn btn-gaming btn-sm" onclick="clearDoctors()">
                                 <i class="fas fa-trash"></i> Clear All
                             </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctor Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="stat-number" id="totalDoctorsCount">0</div>
+                                <div class="stat-label">Total Doctors</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-number" id="availableDoctorsCount">0</div>
+                                <div class="stat-label">Available Now</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-number" id="avgDoctorRating">0</div>
+                                <div class="stat-label">Avg Rating</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </div>
+                                <div class="stat-number" id="totalHospitals">0</div>
+                                <div class="stat-label">Hospitals</div>
+                            </div>
                         </div>
                     </div>
                     
@@ -633,8 +673,12 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Specialization</th>
+                                    <th>Experience</th>
+                                    <th>Hospital</th>
+                                    <th>Consultation Fee</th>
+                                    <th>Rating</th>
                                     <th>Status</th>
-                                    <th>Location</th>
+                                    <th>Available Days</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -661,6 +705,46 @@
                         </div>
                     </div>
                     
+                    <!-- Patient Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-number" id="totalPatientsCount">0</div>
+                                <div class="stat-label">Total Patients</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="stat-number" id="avgHealthScore">0</div>
+                                <div class="stat-label">Avg Health Score</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-procedures"></i>
+                                </div>
+                                <div class="stat-number" id="patientsWithConditions">0</div>
+                                <div class="stat-label">With Conditions</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-allergies"></i>
+                                </div>
+                                <div class="stat-number" id="patientsWithAllergies">0</div>
+                                <div class="stat-label">With Allergies</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-dark">
                             <thead>
@@ -669,8 +753,12 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>Age/Gender</th>
+                                    <th>Blood Group</th>
                                     <th>Health Score</th>
-                                    <th>Location</th>
+                                    <th>Conditions</th>
+                                    <th>Allergies</th>
+                                    <th>Emergency Contact</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -710,14 +798,194 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin dashboard initializing...');
+            
+            // Initialize data first
             initializeData();
             loadDashboardData();
-            // Don't initialize map immediately - it will be initialized when locations section is shown
+            
+            // Setup event listeners immediately
+            setupPermanentEventListeners();
+            
+            // Start location tracking
             startLocationTracking();
+            
+            console.log('Admin dashboard initialization complete');
         });
+
+        // Permanent event listener setup - works every time
+        function setupPermanentEventListeners() {
+            console.log('Setting up permanent event listeners...');
+            
+            // Remove any existing listeners to prevent duplicates
+            if (window.adminClickHandler) {
+                document.removeEventListener('click', window.adminClickHandler, true);
+            }
+            
+            // Create and store the global click handler
+            window.adminClickHandler = function(e) {
+                handleAdminClick(e);
+            };
+            
+            // Add the click handler with capture mode for reliability
+            document.addEventListener('click', window.adminClickHandler, true);
+            
+            // Also add as backup with bubble mode
+            document.addEventListener('click', window.adminClickHandler, false);
+            
+            console.log('Permanent event listeners setup complete');
+        }
+
+        // Comprehensive click handler
+        function handleAdminClick(e) {
+            const target = e.target;
+            const closest = target.closest.bind(target);
+            
+            // Handle sidebar navigation
+            const sidebarItem = closest('.sidebar-item');
+            if (sidebarItem) {
+                const href = sidebarItem.getAttribute('href');
+                if (href && href !== 'index.html') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const sectionName = href.replace('#', '');
+                    console.log('Sidebar navigation:', sectionName);
+                    showSection(sectionName);
+                    return;
+                }
+            }
+            
+            // Handle filter tags
+            const filterTag = closest('.filter-tag');
+            if (filterTag) {
+                e.preventDefault();
+                e.stopPropagation();
+                const text = filterTag.textContent.trim();
+                console.log('Filter tag clicked:', text);
+                
+                // Update active state
+                document.querySelectorAll('.filter-tag').forEach(tag => {
+                    tag.classList.remove('active');
+                });
+                filterTag.classList.add('active');
+                
+                // Execute filter action
+                if (text === 'All Doctors') {
+                    filterByStatus('all');
+                } else if (text === 'Available Now') {
+                    filterByStatus('available');
+                } else if (text === 'Top Rated') {
+                    filterByStatus('top-rated');
+                } else if (text === 'Experienced') {
+                    filterByStatus('experienced');
+                } else if (text === 'Clear & Reload') {
+                    clearAndReload();
+                }
+                return;
+            }
+            
+            // Handle buttons with onclick attributes
+            const button = closest('button[onclick]');
+            if (button) {
+                e.preventDefault();
+                e.stopPropagation();
+                const onclick = button.getAttribute('onclick');
+                if (onclick) {
+                    console.log('Executing button onclick:', onclick);
+                    executeOnclick(onclick);
+                    return;
+                }
+            }
+            
+            // Handle links with onclick attributes
+            const link = closest('a[onclick]');
+            if (link) {
+                e.preventDefault();
+                e.stopPropagation();
+                const onclick = link.getAttribute('onclick');
+                if (onclick) {
+                    console.log('Executing link onclick:', onclick);
+                    executeOnclick(onclick);
+                    return;
+                }
+            }
+        }
+
+        // Safe onclick execution
+        function executeOnclick(onclickString) {
+            try {
+                // Create a safe execution context
+                const func = new Function('event', onclickString);
+                func(event);
+            } catch (error) {
+                console.error('Error executing onclick:', error);
+                showMessage('Error executing action: ' + error.message, 'error');
+            }
+        }
+
+        // Backup initialization - ensures onclick works even if primary system fails
+        window.addEventListener('load', function() {
+            console.log('Window loaded - backup initialization');
+            setTimeout(() => {
+                setupPermanentEventListeners();
+            }, 100);
+        });
+
+        // Additional backup - ensures onclick works after any DOM changes
+        const observer = new MutationObserver(function(mutations) {
+            let shouldReinitialize = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // Check if any buttons or interactive elements were added
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            if (node.matches && (node.matches('button[onclick]') || node.matches('a[onclick]') || 
+                                node.querySelector('button[onclick]') || node.querySelector('a[onclick]'))) {
+                                shouldReinitialize = true;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (shouldReinitialize) {
+                setTimeout(() => {
+                    console.log('DOM changed - reinitializing event listeners');
+                    setupPermanentEventListeners();
+                }, 50);
+            }
+        });
+
+        // Start observing the document for changes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Final backup - global onclick handler for any missed elements
+        document.onclick = function(e) {
+            // This is a last resort backup
+            if (e.target && e.target.onclick) {
+                console.log('Backup onclick handler triggered');
+                try {
+                    e.target.onclick(e);
+                } catch (error) {
+                    console.error('Backup onclick error:', error);
+                }
+            }
+        };
+
+        // Ensure event listeners are re-established after any dynamic content changes
+        function reinitializeEventListeners() {
+            console.log('Reinitializing event listeners...');
+            setupPermanentEventListeners();
+        }
 
         // Initialize mock data
         function initializeData() {
+            // Load real data from localStorage
+            loadRealData();
+            
             appointments = [
                 { id: 1, patient: 'Alice Johnson', doctor: 'Dr. John Smith', datetime: '2026-04-01 10:00', type: 'Online', status: 'scheduled', fee: 150, patientLocation: { lat: 28.6139, lng: 77.2090 }, doctorLocation: { lat: 19.0760, lng: 72.8777 } },
                 { id: 2, patient: 'Bob Smith', doctor: 'Dr. Sarah Johnson', datetime: '2026-04-01 14:00', type: 'Offline', status: 'completed', fee: 200, patientLocation: { lat: 12.9716, lng: 77.5946 }, doctorLocation: { lat: 22.5726, lng: 88.3639 } },
@@ -726,27 +994,111 @@
                 { id: 5, patient: 'Eva Martinez', doctor: 'Dr. Robert Wilson', datetime: '2026-04-02 11:00', type: 'Offline', status: 'scheduled', fee: 175, patientLocation: { lat: 21.1458, lng: 79.0882 }, doctorLocation: { lat: 18.5204, lng: 73.8567 } }
             ];
 
-            doctors = [
-                { id: 1, name: 'Dr. John Smith', email: 'john@clinicalink.com', specialization: 'Cardiology', status: 'online', location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
-                { id: 2, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Pediatrics', status: 'online', location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
-                { id: 3, name: 'Dr. Michael Brown', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'offline', location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
-                { id: 4, name: 'Dr. Emily Davis', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'online', location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
-                { id: 5, name: 'Dr. Robert Wilson', email: 'robert@clinicalink.com', specialization: 'Orthopedics', status: 'offline', location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
-                { id: 6, name: 'Dr. Lisa Anderson', email: 'lisa@clinicalink.com', specialization: 'Psychiatry', status: 'online', location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
-                { id: 7, name: 'Dr. James Wilson', email: 'james@clinicalink.com', specialization: 'General Medicine', status: 'online', location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' },
-                { id: 8, name: 'Dr. Maria Garcia', email: 'maria@clinicalink.com', specialization: 'Gynecology', status: 'busy', location: { lat: 18.5204, lng: 73.8567 }, city: 'Pune' }
-            ];
+            // Use real doctors data if available, otherwise use sample data
+            if (doctors.length === 0) {
+                doctors = [
+                    { id: 1, name: 'Dr. John Smith', email: 'john@clinicalink.com', specialization: 'Cardiology', status: 'online', location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
+                    { id: 2, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Pediatrics', status: 'online', location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
+                    { id: 3, name: 'Dr. Michael Brown', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'offline', location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
+                    { id: 4, name: 'Dr. Emily Davis', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'online', location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
+                    { id: 5, name: 'Dr. Robert Wilson', email: 'robert@clinicalink.com', specialization: 'Orthopedics', status: 'offline', location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
+                    { id: 6, name: 'Dr. Lisa Anderson', email: 'lisa@clinicalink.com', specialization: 'Psychiatry', status: 'online', location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
+                    { id: 7, name: 'Dr. James Wilson', email: 'james@clinicalink.com', specialization: 'General Medicine', status: 'online', location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' },
+                    { id: 8, name: 'Dr. Maria Garcia', email: 'maria@clinicalink.com', specialization: 'Gynecology', status: 'busy', location: { lat: 18.5204, lng: 73.8567 }, city: 'Pune' }
+                ];
+            }
 
-            patients = [
-                { id: 1, name: 'Alice Johnson', email: 'alice@email.com', phone: '+91-9876543210', healthScore: 95, location: { lat: 28.6139, lng: 77.2090 }, city: 'New Delhi' },
-                { id: 2, name: 'Bob Smith', email: 'bob@email.com', phone: '+91-9876543211', healthScore: 88, location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
-                { id: 3, name: 'Carol Williams', email: 'carol@email.com', phone: '+91-9876543212', healthScore: 92, location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
-                { id: 4, name: 'David Brown', email: 'david@email.com', phone: '+91-9876543213', healthScore: 85, location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
-                { id: 5, name: 'Eva Martinez', email: 'eva@email.com', phone: '+91-9876543214', healthScore: 90, location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
-                { id: 6, name: 'Frank Chen', email: 'frank@email.com', phone: '+91-9876543215', healthScore: 87, location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
-                { id: 7, name: 'Grace Lee', email: 'grace@email.com', phone: '+91-9876543216', healthScore: 93, location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
-                { id: 8, name: 'Henry Kumar', email: 'henry@email.com', phone: '+91-9876543217', healthScore: 89, location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' }
-            ];
+            // Use real patients data if available, otherwise use sample data
+            if (patients.length === 0) {
+                patients = [
+                    { id: 1, name: 'Alice Johnson', email: 'alice@email.com', phone: '+91-9876543210', healthScore: 95, location: { lat: 28.6139, lng: 77.2090 }, city: 'New Delhi' },
+                    { id: 2, name: 'Bob Smith', email: 'bob@email.com', phone: '+91-9876543211', healthScore: 88, location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai' },
+                    { id: 3, name: 'Carol Williams', email: 'carol@email.com', phone: '+91-9876543212', healthScore: 92, location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore' },
+                    { id: 4, name: 'David Brown', email: 'david@email.com', phone: '+91-9876543213', healthScore: 85, location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata' },
+                    { id: 5, name: 'Eva Martinez', email: 'eva@email.com', phone: '+91-9876543214', healthScore: 90, location: { lat: 28.7041, lng: 77.1025 }, city: 'Delhi' },
+                    { id: 6, name: 'Frank Chen', email: 'frank@email.com', phone: '+91-9876543215', healthScore: 87, location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad' },
+                    { id: 7, name: 'Grace Lee', email: 'grace@email.com', phone: '+91-9876543216', healthScore: 93, location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur' },
+                    { id: 8, name: 'Henry Kumar', email: 'henry@email.com', phone: '+91-9876543217', healthScore: 89, location: { lat: 21.1458, lng: 79.0882 }, city: 'Nagpur' }
+                ];
+            }
+        }
+
+        // Load real data from localStorage
+        function loadRealData() {
+            console.log('Loading real data...');
+            
+            // Load doctors from localStorage
+            const storedDoctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+            if (storedDoctors.length > 0) {
+                console.log('Found', storedDoctors.length, 'registered doctors');
+                doctors = storedDoctors.map((doctor, index) => ({
+                    id: doctor.id || index + 1,
+                    name: doctor.fullName || doctor.name || 'Unknown Doctor',
+                    email: doctor.email || 'unknown@clinicalink.com',
+                    specialization: doctor.specialization || 'General',
+                    status: doctor.status || 'available',
+                    location: { lat: 28.6139 + (Math.random() - 0.5) * 10, lng: 77.2090 + (Math.random() - 0.5) * 10 },
+                    city: doctor.hospital ? doctor.hospital.split(',')[1]?.trim() || 'Unknown' : 'Unknown',
+                    experience: doctor.experience || 0,
+                    hospital: doctor.hospital || 'Not specified',
+                    fee: doctor.fee || 500,
+                    rating: doctor.rating || 0.0,
+                    availableDays: doctor.availableDays || ['mon', 'tue', 'wed', 'thu', 'fri'],
+                    medicalLicense: doctor.medicalLicense || 'Not specified',
+                    registeredAt: doctor.registeredAt || new Date().toISOString()
+                }));
+            } else {
+                console.log('No registered doctors, using sample data');
+                // Use sample Indian doctors as available doctors list
+                doctors = [
+                    { id: 1, name: 'Dr. Priyanshu Sharma', email: 'priyanshu@clinicalink.com', specialization: 'Cardiology', status: 'available', location: { lat: 28.6139, lng: 77.2090 }, city: 'Delhi', experience: 15, hospital: 'Apollo Hospitals, Delhi', fee: 1500, rating: 4.8, availableDays: ['mon', 'tue', 'wed', 'thu', 'fri'], medicalLicense: 'DL-MED-001', registeredAt: new Date().toISOString() },
+                    { id: 2, name: 'Dr. Anjali Patel', email: 'anjali@clinicalink.com', specialization: 'Pediatrics', status: 'available', location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai', experience: 12, hospital: 'Fortis Healthcare, Mumbai', fee: 800, rating: 4.9, availableDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'], medicalLicense: 'MH-MED-002', registeredAt: new Date().toISOString() },
+                    { id: 3, name: 'Dr. Rohan Gupta', email: 'rohan@clinicalink.com', specialization: 'Orthopedics', status: 'busy', location: { lat: 26.9124, lng: 75.7873 }, city: 'Jaipur', experience: 20, hospital: 'Max Healthcare, Delhi', fee: 1200, rating: 4.7, availableDays: ['tue', 'wed', 'thu', 'fri'], medicalLicense: 'RJ-MED-003', registeredAt: new Date().toISOString() },
+                    { id: 4, name: 'Dr. Sarah Johnson', email: 'sarah@clinicalink.com', specialization: 'Gynecology', status: 'available', location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore', experience: 10, hospital: 'Columbia Asia, Bangalore', fee: 1000, rating: 4.6, availableDays: ['mon', 'tue', 'wed', 'thu', 'fri'], medicalLicense: 'KA-MED-004', registeredAt: new Date().toISOString() },
+                    { id: 5, name: 'Dr. Michael Chen', email: 'michael@clinicalink.com', specialization: 'Neurology', status: 'available', location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata', experience: 18, hospital: 'AIIMS, New Delhi', fee: 2000, rating: 4.9, availableDays: ['mon', 'wed', 'fri'], medicalLicense: 'WB-MED-005', registeredAt: new Date().toISOString() },
+                    { id: 6, name: 'Dr. Emily Williams', email: 'emily@clinicalink.com', specialization: 'Dermatology', status: 'available', location: { lat: 17.3850, lng: 78.4867 }, city: 'Hyderabad', experience: 8, hospital: 'Kaya Skin Clinic, Mumbai', fee: 600, rating: 4.5, availableDays: ['tue', 'thu', 'sat', 'sun'], medicalLicense: 'TS-MED-006', registeredAt: new Date().toISOString() }
+                ];
+            }
+
+            // Load patients from localStorage
+            const storedPatients = JSON.parse(localStorage.getItem('patients') || '[]');
+            if (storedPatients.length > 0) {
+                console.log('Found', storedPatients.length, 'registered patients');
+                patients = storedPatients.map((patient, index) => ({
+                    id: patient.id || index + 1,
+                    name: patient.fullName || patient.name || 'Unknown Patient',
+                    email: patient.email || 'unknown@clinicalink.com',
+                    phone: patient.phone || '+91-0000000000',
+                    healthScore: Math.floor(Math.random() * 20) + 80, // Random health score 80-100
+                    location: { lat: 28.6139 + (Math.random() - 0.5) * 10, lng: 77.2090 + (Math.random() - 0.5) * 10 },
+                    city: 'Unknown',
+                    age: patient.age || 'Not specified',
+                    gender: patient.gender || 'Not specified',
+                    bloodGroup: patient.bloodGroup || 'Not specified',
+                    allergies: patient.allergies || 'None',
+                    conditions: patient.conditions || 'None',
+                    emergencyContact: patient.emergencyContact || 'Not specified',
+                    registeredAt: patient.registeredAt || new Date().toISOString()
+                }));
+            } else {
+                console.log('No registered patients, using sample data');
+                // Use sample patients (different from doctors)
+                patients = [
+                    { id: 1, name: 'Rahul Sharma', email: 'rahul@email.com', phone: '+91-9876543210', healthScore: 95, location: { lat: 28.6139, lng: 77.2090 }, city: 'New Delhi', age: 32, gender: 'Male', bloodGroup: 'B+', allergies: 'None', conditions: 'Hypertension', emergencyContact: '+91-9876543211', registeredAt: new Date().toISOString() },
+                    { id: 2, name: 'Priya Patel', email: 'priya@email.com', phone: '+91-8765432109', healthScore: 88, location: { lat: 19.0760, lng: 72.8777 }, city: 'Mumbai', age: 28, gender: 'Female', bloodGroup: 'O+', allergies: 'Peanuts', conditions: 'None', emergencyContact: '+91-8765432108', registeredAt: new Date().toISOString() },
+                    { id: 3, name: 'Amit Kumar', email: 'amit@email.com', phone: '+91-7654321098', healthScore: 92, location: { lat: 12.9716, lng: 77.5946 }, city: 'Bangalore', age: 45, gender: 'Male', bloodGroup: 'A+', allergies: 'Dust', conditions: 'Diabetes Type 2', emergencyContact: '+91-7654321097', registeredAt: new Date().toISOString() },
+                    { id: 4, name: 'Sneha Reddy', email: 'sneha@email.com', phone: '+91-6543210987', healthScore: 85, location: { lat: 22.5726, lng: 88.3639 }, city: 'Kolkata', age: 35, gender: 'Female', bloodGroup: 'AB+', allergies: 'None', conditions: 'Asthma', emergencyContact: '+91-6543210986', registeredAt: new Date().toISOString() }
+                ];
+            }
+
+            console.log('Final doctors count:', doctors.length);
+            console.log('Final patients count:', patients.length);
+            
+            // Show notification if new records found
+            if (storedDoctors.length > 0 || storedPatients.length > 0) {
+                const totalNew = storedDoctors.length + storedPatients.length;
+                showMessage(`Found ${totalNew} registered records (${storedDoctors.length} doctors, ${storedPatients.length} patients)`, 'success');
+            }
         }
 
         // Load dashboard data
@@ -764,10 +1116,34 @@
         // Load recent appointments
         function loadRecentAppointments() {
             const tbody = document.getElementById('recentAppointments');
-            tbody.innerHTML = '';
+            if (!tbody) return;
             
+            tbody.innerHTML = '';
             appointments.slice(0, 5).forEach(appointment => {
-                const row = createAppointmentRow(appointment);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${appointment.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${appointment.patient.charAt(0)}</div>
+                            <div>${appointment.patient}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${appointment.doctor.charAt(0)}</div>
+                            <div>${appointment.doctor}</div>
+                        </div>
+                    </td>
+                    <td>${appointment.datetime}</td>
+                    <td><span class="status-badge status-${appointment.status}">${appointment.status}</span></td>
+                    <td>
+                        <span class="location-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Live
+                        </span>
+                    </td>
+                `;
                 tbody.appendChild(row);
             });
         }
@@ -1054,6 +1430,8 @@
             }
         }
         function showSection(sectionName) {
+            console.log('Showing section:', sectionName);
+            
             // Hide all sections
             document.querySelectorAll('.content-section').forEach(section => {
                 section.style.display = 'none';
@@ -1064,20 +1442,36 @@
             if (targetSection) {
                 targetSection.style.display = 'block';
                 
+                // Load data based on section
+                if (sectionName === 'appointments') {
+                    loadAppointmentsTable();
+                } else if (sectionName === 'doctors') {
+                    loadDoctorsTable();
+                    loadDoctorStatistics();
+                } else if (sectionName === 'patients') {
+                    loadPatientsTable();
+                    loadPatientStatistics();
+                }
+                
                 // Initialize map if locations section is shown
                 if (sectionName === 'locations' && !map) {
                     setTimeout(() => {
                         initializeMap();
                     }, 100);
                 }
+                
+                // Reinitialize event listeners to ensure they work with new content
+                setTimeout(() => {
+                    reinitializeEventListeners();
+                }, 50);
             }
             
             // Update sidebar
-            document.querySelectorAll('.sidebar-link').forEach(item => {
+            document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            const activeItem = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
+            const activeItem = document.querySelector(`[href="#${sectionName}"]`);
             if (activeItem) {
                 activeItem.classList.add('active');
             }
@@ -1090,7 +1484,41 @@
             
             tbody.innerHTML = '';
             appointments.forEach(appointment => {
-                const row = createAppointmentRow(appointment);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${appointment.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${appointment.patient.charAt(0)}</div>
+                            <div>${appointment.patient}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${appointment.doctor.charAt(0)}</div>
+                            <div>${appointment.doctor}</div>
+                        </div>
+                    </td>
+                    <td>${appointment.datetime}</td>
+                    <td><span class="status-badge status-${appointment.status}">${appointment.status}</span></td>
+                    <td>
+                        <span class="location-badge">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Live
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-gaming" onclick="viewAppointmentDetails(${appointment.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-gaming" onclick="editAppointment(${appointment.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-gaming" onclick="cancelAppointment(${appointment.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
                 tbody.appendChild(row);
             });
         }
@@ -1108,29 +1536,144 @@
                     <td>
                         <div class="d-flex align-items-center">
                             <div class="user-avatar me-2">${doctor.name.charAt(0)}</div>
-                            <div>${doctor.name}</div>
+                            <div>
+                                <div class="fw-bold">${doctor.name}</div>
+                                <small class="text-muted">${doctor.city}</small>
+                            </div>
                         </div>
                     </td>
                     <td>${doctor.email}</td>
-                    <td>${doctor.specialization}</td>
-                    <td><span class="status-badge status-${doctor.status}">${doctor.status}</span></td>
                     <td>
-                        <span class="location-badge">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Live
-                        </span>
+                        <span class="badge bg-info">${doctor.specialization}</span>
+                    </td>
+                    <td>${doctor.experience} years</td>
+                    <td>${doctor.hospital}</td>
+                    <td>₹${doctor.fee}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="stars me-2">
+                                ${generateStars(doctor.rating)}
+                            </div>
+                            <small>${doctor.rating}</small>
+                        </div>
                     </td>
                     <td>
-                        <button class="action-btn" onclick="viewDoctorDetails(${doctor.id})" title="View Details">
+                        <span class="status-badge status-${doctor.status}">${doctor.status}</span>
+                    </td>
+                    <td>
+                        <small>${formatAvailableDays(doctor.availableDays)}</small>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-gaming" onclick="viewDoctorDetails(${doctor.id})">
                             <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="removeDoctor(${doctor.id})" title="Remove">
-                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Load doctor statistics
+        function loadDoctorStatistics() {
+            const totalDoctorsCount = document.getElementById('totalDoctorsCount');
+            const availableDoctorsCount = document.getElementById('availableDoctorsCount');
+            const avgDoctorRating = document.getElementById('avgDoctorRating');
+            const totalHospitals = document.getElementById('totalHospitals');
+            
+            if (totalDoctorsCount) totalDoctorsCount.textContent = doctors.length;
+            
+            if (availableDoctorsCount) {
+                const available = doctors.filter(d => d.status === 'available').length;
+                availableDoctorsCount.textContent = available;
+            }
+            
+            if (avgDoctorRating) {
+                const avgRating = doctors.length > 0 
+                    ? (doctors.reduce((sum, d) => sum + (d.rating || 0), 0) / doctors.length).toFixed(1)
+                    : '0.0';
+                avgDoctorRating.textContent = avgRating;
+            }
+            
+            if (totalHospitals) {
+                const uniqueHospitals = [...new Set(doctors.map(d => d.hospital).filter(h => h && h !== 'Not specified'))];
+                totalHospitals.textContent = uniqueHospitals.length;
+            }
+        }
+
+        // Load patients table
+        function loadPatientsTable() {
+            const tbody = document.getElementById('patientsTable');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            patients.forEach(patient => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2">${patient.name.charAt(0)}</div>
+                            <div>${patient.name}</div>
+                        </div>
+                    </td>
+                    <td>${patient.email}</td>
+                    <td>${patient.phone}</td>
+                    <td>${patient.age || 'N/A'} / ${patient.gender || 'N/A'}</td>
+                    <td>${patient.bloodGroup || 'N/A'}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="health-score me-2" style="width: 30px; height: 30px; border-radius: 50%; background: conic-gradient(#00ff88 ${patient.healthScore || 85}%, #333 0%); display: flex; align-items: center; justify-content: center;">
+                                <span style="font-size: 10px; font-weight: bold;">${patient.healthScore || 85}</span>
+                            </div>
+                            ${patient.healthScore || 85}%
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${patient.conditions && patient.conditions !== 'None' ? 'bg-warning' : 'bg-secondary'}" style="font-size: 11px;">
+                            ${patient.conditions || 'None'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${patient.allergies && patient.allergies !== 'None' ? 'bg-danger' : 'bg-secondary'}" style="font-size: 11px;">
+                            ${patient.allergies || 'None'}
+                        </span>
+                    </td>
+                    <td>${patient.emergencyContact || 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-gaming" onclick="viewPatientDetails(${patient.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load patient statistics
+        function loadPatientStatistics() {
+            const totalPatientsCount = document.getElementById('totalPatientsCount');
+            const avgHealthScore = document.getElementById('avgHealthScore');
+            const patientsWithConditions = document.getElementById('patientsWithConditions');
+            const patientsWithAllergies = document.getElementById('patientsWithAllergies');
+            
+            if (totalPatientsCount) totalPatientsCount.textContent = patients.length;
+            
+            if (avgHealthScore) {
+                const avgScore = patients.length > 0 
+                    ? Math.round(patients.reduce((sum, p) => sum + (p.healthScore || 85), 0) / patients.length)
+                    : 0;
+                avgHealthScore.textContent = avgScore;
+            }
+            
+            if (patientsWithConditions) {
+                const withConditions = patients.filter(p => p.conditions && p.conditions !== 'None').length;
+                patientsWithConditions.textContent = withConditions;
+            }
+            
+            if (patientsWithAllergies) {
+                const withAllergies = patients.filter(p => p.allergies && p.allergies !== 'None').length;
+                patientsWithAllergies.textContent = withAllergies;
+            }
         }
 
         // Load patients table
@@ -1164,11 +1707,8 @@
                         </span>
                     </td>
                     <td>
-                        <button class="action-btn" onclick="viewPatientDetails(${patient.id})" title="View Details">
+                        <button class="btn btn-sm btn-gaming" onclick="viewPatientDetails(${patient.id})">
                             <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="removePatient(${patient.id})" title="Remove">
-                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 `;
@@ -1176,10 +1716,156 @@
             });
         }
 
+        function viewPatientDetails(id) {
+            const patient = patients.find(p => p.id === id);
+            if (patient) {
+                showMessage(`Viewing patient ${id}: ${patient.name} (${patient.email})`, 'info');
+            }
+        }
+
+        function viewDoctorDetails(id) {
+            const doctor = doctors.find(d => d.id === id);
+            if (doctor) {
+                showMessage(`Viewing doctor ${id}: ${doctor.name} (${doctor.specialization})`, 'info');
+            }
+        }
+
+        function exportPatients() {
+            const dataStr = JSON.stringify(patients, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'patients_' + new Date().toISOString().split('T')[0] + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage('Patients data exported successfully', 'success');
+        }
+
+        function clearPatients() {
+            if (confirm('Are you sure you want to clear all patients data? This action cannot be undone.')) {
+                patients = [];
+                localStorage.removeItem('patients');
+                loadPatientsTable();
+                loadPatientStatistics();
+                loadDashboardData();
+                showMessage('All patients data cleared', 'warning');
+            }
+        }
+
+        function exportDoctors() {
+            const dataStr = JSON.stringify(doctors, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'doctors_' + new Date().toISOString().split('T')[0] + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage('Doctors data exported successfully', 'success');
+        }
+
+        function clearDoctors() {
+            if (confirm('Are you sure you want to clear all doctors data? This action cannot be undone.')) {
+                doctors = [];
+                localStorage.removeItem('doctors');
+                loadDoctorsTable();
+                loadDashboardData();
+                showMessage('All doctors data cleared', 'warning');
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showMessage(message, type = 'info') {
+            // Create a simple message display
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'info'} position-fixed`;
+            messageDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            messageDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Filter functions
+        function filterByStatus(status) {
+            console.log('Filtering by status:', status);
+            // Update active filter tag
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            showMessage(`Filtering by: ${status}`, 'info');
+        }
+
+        function clearAndReload() {
+            if (confirm('This will clear all registered data and reload with sample data. Continue?')) {
+                localStorage.removeItem('doctors');
+                localStorage.removeItem('patients');
+                console.log('Cleared localStorage');
+                loadRealData();
+                loadDashboardData();
+                showMessage('Data cleared and reloaded', 'success');
+            }
+        }
+
+        // Helper functions
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star" style="color: #ffc107;"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt" style="color: #ffc107;"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star" style="color: #ffc107;"></i>';
+            }
+            
+            return stars;
+        }
+
+        function formatAvailableDays(days) {
+            if (!days || days.length === 0) return 'Flexible';
+            
+            const dayNames = {
+                'mon': 'Mon', 'tue': 'Tue', 'wed': 'Wed',
+                'thu': 'Thu', 'fri': 'Fri', 'sat': 'Sat', 'sun': 'Sun'
+            };
+            
+            return days.map(day => dayNames[day]).join(', ');
+        }
+
         // Action functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
         }
 
         function refreshData() {
@@ -1188,19 +1874,24 @@
         }
 
         function refreshLocations() {
-            updateMapMarkers();
-            updateLocationLists();
-            showMessage('Locations refreshed', 'success');
+            if (map) {
+                updateMapMarkers();
+                updateLocationLists();
+                showMessage('Locations refreshed', 'success');
+            }
         }
 
         function filterAppointments() {
-            const searchValue = document.getElementById('appointmentSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#appointmentsTable tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchValue) ? '' : 'none';
-            });
+            const searchInput = document.getElementById('appointmentSearch');
+            if (searchInput) {
+                const searchValue = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#appointmentsTable tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            }
         }
 
         function viewAppointmentDetails(id) {
@@ -1224,105 +1915,6 @@
                     showMessage('Appointment cancelled successfully', 'success');
                 }
             }
-        }
-
-        function viewDoctorDetails(id) {
-            const doctor = doctors.find(d => d.id === id);
-            if (doctor) {
-                showMessage(`Viewing doctor ${id}: ${doctor.name} - ${doctor.specialization}`, 'info');
-            }
-        }
-
-        function removeDoctor(id) {
-            if (confirm('Are you sure you want to remove this doctor?')) {
-                doctors = doctors.filter(d => d.id !== id);
-                loadDoctorsTable();
-                loadDashboardData();
-                updateMapMarkers();
-                showMessage('Doctor removed successfully', 'success');
-            }
-        }
-
-        function viewPatientDetails(id) {
-            const patient = patients.find(p => p.id === id);
-            if (patient) {
-                showMessage(`Viewing patient ${id}: ${patient.name} - Health Score: ${patient.healthScore}%`, 'info');
-            }
-        }
-
-        function removePatient(id) {
-            if (confirm('Are you sure you want to remove this patient?')) {
-                patients = patients.filter(p => p.id !== id);
-                loadPatientsTable();
-                loadDashboardData();
-                updateMapMarkers();
-                showMessage('Patient removed successfully', 'success');
-            }
-        }
-
-        function exportAppointments() {
-            showMessage('Exporting appointments to CSV...', 'success');
-            // CSV export functionality would be implemented here
-        }
-
-        function exportDoctors() {
-            showMessage('Exporting doctors to CSV...', 'success');
-            // CSV export functionality would be implemented here
-        }
-
-        function exportPatients() {
-            showMessage('Exporting patients to CSV...', 'success');
-            // CSV export functionality would be implemented here
-        }
-
-        function clearAppointments() {
-            if (confirm('Are you sure you want to clear all appointments? This action cannot be undone.')) {
-                appointments = [];
-                loadAppointmentsTable();
-                loadRecentAppointments();
-                loadDashboardData();
-                showMessage('All appointments cleared', 'success');
-            }
-        }
-
-        function clearDoctors() {
-            if (confirm('Are you sure you want to clear all doctors? This action cannot be undone.')) {
-                doctors = [];
-                loadDoctorsTable();
-                loadDashboardData();
-                updateMapMarkers();
-                showMessage('All doctors cleared', 'success');
-            }
-        }
-
-        function clearPatients() {
-            if (confirm('Are you sure you want to clear all patients? This action cannot be undone.')) {
-                patients = [];
-                loadPatientsTable();
-                loadDashboardData();
-                updateMapMarkers();
-                showMessage('All patients cleared', 'success');
-            }
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
-            }
-        }
-
-        function showMessage(message, type) {
-            // Create a simple message display
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} position-fixed top-0 start-50 translate-middle-x mt-3`;
-            messageDiv.style.zIndex = '9999';
-            messageDiv.textContent = message;
-            
-            document.body.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
         }
     </script>
 </body>
